@@ -1,3 +1,13 @@
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    mod(require("../../lib/codemirror"));
+  else if (typeof define == "function" && define.amd) // AMD
+    define(["../../lib/codemirror"], mod);
+  else // Plain browser env
+    mod(CodeMirror);
+})(function(CodeMirror) {
+"use strict";
+
 CodeMirror.defineMode("haxe", function(config, parserConfig) {
   var indentUnit = config.indentUnit;
 
@@ -235,11 +245,12 @@ CodeMirror.defineMode("haxe", function(config, parserConfig) {
   poplex.lex = true;
 
   function expect(wanted) {
-    return function(type) {
+    function f(type) {
       if (type == wanted) return cont();
       else if (wanted == ";") return pass();
-      else return cont(arguments.callee);
+      else return cont(f);
     };
+    return f;
   }
 
   function statement(type) {
@@ -422,8 +433,13 @@ CodeMirror.defineMode("haxe", function(config, parserConfig) {
       else return lexical.indented + (closing ? 0 : indentUnit);
     },
 
-    electricChars: "{}"
+    electricChars: "{}",
+    blockCommentStart: "/*",
+    blockCommentEnd: "*/",
+    lineComment: "//"
   };
 });
 
 CodeMirror.defineMIME("text/x-haxe", "haxe");
+
+});

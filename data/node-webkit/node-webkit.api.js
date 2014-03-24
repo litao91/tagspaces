@@ -1,19 +1,19 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that 
+ * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 define(function(require, exports, module) {
 "use strict";
-    
+
     // Activating browser specific exports modul
     console.log("Loading ioapi.node.js..");
-    
-    var TSCORE = require("tscore");    
+
+    var TSCORE = require("tscore");
     var TSPOSTIO = require("tspostioapi");
-    
-    process.on("uncaughtException", function(err) { 
-        //alert("error: " + err);  
+
+    process.on("uncaughtException", function(err) {
+        //alert("error: " + err);
     });
-    
+
     function scanDirectory(dirPath, index) {
         try {
             var dirList = fs.readdirSync(dirPath);
@@ -26,12 +26,12 @@ define(function(require, exports, module) {
                     "isFile": !stats.isDirectory(),
                     "size": stats.size,
                     "lmdt": stats.mtime,
-                    "path": path  
-                });     
+                    "path": path
+                });
                 if (stats.isDirectory()) {
                     scanDirectory(path, index);
-                }                        
-            }        
+                }
+            }
             return index;
         } catch(ex) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
@@ -40,13 +40,13 @@ define(function(require, exports, module) {
 
     function generateDirectoryTree(dirPath) {
         try {
-            var tree = {}; 
-            var dstats = fs.statSync(dirPath);           
+            var tree = {};
+            var dstats = fs.statSync(dirPath);
             tree["name"] = pathUtils.basename(dirPath);
             tree["isFile"] = false;
-            tree["lmdt"] = dstats.mtime;   
-            tree["path"] = dirPath;         
-            tree["children"] = [];            
+            tree["lmdt"] = dstats.mtime;
+            tree["path"] = dirPath;
+            tree["children"] = [];
             var dirList = fs.readdirSync(dirPath);
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+TSCORE.dirSeparator+dirList[i];
@@ -56,34 +56,34 @@ define(function(require, exports, module) {
                         "name": pathUtils.basename(path),
                         "isFile": true,
                         "size": stats.size,
-                        "lmdt": stats.mtime,   
-                        "path": path 
+                        "lmdt": stats.mtime,
+                        "path": path
                     });
                 } else {
                     tree["children"].push( generateDirectoryTree(path) );
-                }  
+                }
             }
             return tree;
         } catch(ex) {
             console.error("Scanning directory "+dirPath+" failed "+ex);
-        }         
+        }
     }
 
     /* var directoryExist = function(dirPath) {
         console.log("Checks if a directory exist: "+dirPath);
         //TSPOSTIO.
     }; */
-    
+
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
-        TSCORE.showLoadingAnimation();  
-        
+        TSCORE.showLoadingAnimation();
+
         var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         //console.log(JSON.stringify(directoryIndex));
         TSPOSTIO.createDirectoryIndex(directoryIndex);
     };
-    
+
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
         TSCORE.showLoadingAnimation();
@@ -92,11 +92,11 @@ define(function(require, exports, module) {
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);
     };
-    
+
     var createDirectory = function(dirPath) {
-        console.log("Creating directory: "+dirPath);   
-        TSCORE.showLoadingAnimation();  
-                
+        console.log("Creating directory: "+dirPath);
+        TSCORE.showLoadingAnimation();
+
         fs.mkdir(dirPath, function(error) {
             if (error) {
                 console.log("Creating directory "+dirPath+" failed "+error);
@@ -108,15 +108,15 @@ define(function(require, exports, module) {
 
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file: "+filePath+" to "+newFilePath);
-        TSCORE.showLoadingAnimation();  
-                
+        TSCORE.showLoadingAnimation();
+
         if(filePath.toLowerCase() == newFilePath.toLowerCase()) {
             console.log("Initial and target filenames are the same...");
-            return false;            
-        }        
+            return false;
+        }
         if(fs.existsSync(newFilePath)) {
             console.log("File renaming failed! Target filename already exists.");
-            return false;            
+            return false;
         }
         fs.rename(filePath, newFilePath, function(error) {
             if (error) {
@@ -126,34 +126,34 @@ define(function(require, exports, module) {
             TSPOSTIO.renameFile(filePath, newFilePath);
         });
     };
-        
+
     var loadTextFile = function(filePath) {
         console.log("Loading file: "+filePath);
-        TSCORE.showLoadingAnimation();  
-                
+        TSCORE.showLoadingAnimation();
+
         fs.readFile(filePath, 'utf8', function(error, content) {
             if (error) {
                 console.log("Loading file "+filePath+" failed "+error);
                 return;
             }
             TSPOSTIO.loadTextFile(content);
-        }); 
+        });
     };
-    
+
     var saveTextFile = function(filePath,content,overWrite) {
         console.log("Saving file: "+filePath);
-        TSCORE.showLoadingAnimation();  
-                
+        TSCORE.showLoadingAnimation();
+
         /** TODO check if fileExist by saving needed
         if(overWrite) {
             // Current implementation
         } else {
-            if (!pathUtils.existsSync(filePath)) { 
+            if (!pathUtils.existsSync(filePath)) {
                // Current implementation
-            }                     
+            }
         }
         */
- 
+
         // Handling the UTF8 support for text files
         var UTF8_BOM = "\ufeff";
 
@@ -161,23 +161,23 @@ define(function(require, exports, module) {
             // already has a UTF8 bom
         } else {
             content = UTF8_BOM+content;
-        }            
+        }
 
         var isNewFile = !fs.existsSync(filePath);
-       
+
         fs.writeFile(filePath, content, 'utf8', function(error) {
             if (error) {
                 console.log("Save to file "+filePath+" failed "+error);
                 return;
             }
             TSPOSTIO.saveTextFile(filePath, isNewFile);
-        }); 
+        });
     };
-    
+
     var listDirectory = function(dirPath) {
       console.log("Listing directory: "+dirPath);
-      TSCORE.showLoadingAnimation();  
-              
+      TSCORE.showLoadingAnimation();
+
       try {
           fs.readdir(dirPath, function(error, dirList) {
             if (error) {
@@ -185,7 +185,7 @@ define(function(require, exports, module) {
               console.log("Listing directory: "+dirPath+" failed "+error);
               return;
             }
-        
+
             var anotatedDirList = [];
             for (var i=0; i < dirList.length; i++) {
                 var path = dirPath+TSCORE.dirSeparator+dirList[i];
@@ -196,34 +196,34 @@ define(function(require, exports, module) {
                     "isFile": !stats.isDirectory(),
                     "size": stats.size,
                     "lmdt": stats.mtime,
-                    "path": path  
-                });                 
-            } 
+                    "path": path
+                });
+            }
             TSPOSTIO.listDirectory(anotatedDirList);
           });
        } catch(ex) {
            TSPOSTIO.errorOpeningPath();
            console.error("Listing directory "+dirPath+" failed "+ex);
-       }                    
+       }
     };
-    
+
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
-        TSCORE.showLoadingAnimation();  
-                
+        TSCORE.showLoadingAnimation();
+
         fs.unlink(path, function(error) {
             if (error) {
                 console.log("Deleting file "+path+" failed "+error);
                 return;
             }
             TSPOSTIO.deleteElement(path);
-        });        
+        });
     };
-    
+
     var checkAccessFileURLAllowed = function() {
         console.log("checkAccessFileURLAllowed function not relevant for node..");
-    };    
-    
+    };
+
     var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
@@ -231,26 +231,26 @@ define(function(require, exports, module) {
             url: 'http://tagspaces.org/releases/version.json?nVer='+cVer,
             type: 'GET',
         })
-        .done(function(data) { 
-            TSPOSTIO.checkNewVersion(data);    
+        .done(function(data) {
+            TSPOSTIO.checkNewVersion(data);
         })
-        .fail(function(data) { 
-            console.log("AJAX failed "+data); 
+        .fail(function(data) {
+            console.log("AJAX failed "+data);
         })
-        ;      
-    };    
+        ;
+    };
 
     var selectDirectory = function() {
         if(document.getElementById('folderDialog') == null) {
             $("#folderLocation").after('<input style="display:none;" id="folderDialog" type="file" nwdirectory />');
         }
-        var chooser = $('#folderDialog');        
+        var chooser = $('#folderDialog');
         chooser.change(function(evt) {
             TSPOSTIO.selectDirectory($(this).val());
         });
-        chooser.trigger('click');  
+        chooser.trigger('click');
     };
-    
+
     var openDirectory = function(dirPath) {
         // showItemInFolder
         gui.Shell.openItem(dirPath);
@@ -265,18 +265,18 @@ define(function(require, exports, module) {
         if(document.getElementById('fileDialog') == null) {
             $("#folderLocation").after('<input style="display:none;" id="fileDialog" type="file" />');
         }
-        var chooser = $('#fileDialog');        
+        var chooser = $('#fileDialog');
         chooser.change(function(evt) {
             console.log("File selected: "+$(this).val());
         });
-        chooser.trigger('click');  
+        chooser.trigger('click');
     };
-    
+
     var openExtensionsDirectory = function() {
         // TODO implement openExtensionsDirectory on node
         //gui.Shell.openItem(extPath);
         console.log("Open extensions directory functionality not implemented on chrome yet!");
-        TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!"); 
+        TSCORE.showAlertDialog("Open extensions directory functionality not implemented on chrome yet!");
     };
 
 /* stats for file:
@@ -292,8 +292,8 @@ define(function(require, exports, module) {
   blocks: 8,
   atime: Mon, 10 Oct 2011 23:24:11 GMT,
   mtime: Mon, 10 Oct 2011 23:24:11 GMT,
-  ctime: Mon, 10 Oct 2011 23:24:11 GMT 
-*/    
+  ctime: Mon, 10 Oct 2011 23:24:11 GMT
+*/
     var getFileProperties = function(filePath) {
         var fileProperties = {};
         var stats = fs.statSync(filePath);
@@ -303,10 +303,10 @@ define(function(require, exports, module) {
             fileProperties.lmdt = stats.mtime;
             TSPOSTIO.getFileProperties(fileProperties);
         } else {
-            console.warn("Error getting file properties. "+filePath+" is directory");   
-        }        
-    };    
-    
+            console.warn("Error getting file properties. "+filePath+" is directory");
+        }
+    };
+
     exports.createDirectory              = createDirectory;
     exports.renameFile                   = renameFile;
     exports.loadTextFile                 = loadTextFile;

@@ -1,6 +1,8 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+
+// The TSCORE
 define(function(require, exports, module) {
 "use strict";
 
@@ -40,6 +42,10 @@ define(function(require, exports, module) {
     function initApp() {
         console.log("Init application");
 
+        /********************************
+         * Load Settings
+         *********************************/
+
         tsSettings.loadSettingsLocalStorage();
 
         checkLocalStorageEnabled();
@@ -58,7 +64,9 @@ define(function(require, exports, module) {
 
           tsSettings.upgradeSettings();
 
-        // Init UI components
+        /******************************************
+         * Init UI components
+         ****************************************/
         tsCoreUI.initUI();
         tsTagsUI.initUI();
         tsTagsUI.generateTagGroups();

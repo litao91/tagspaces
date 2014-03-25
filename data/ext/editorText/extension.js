@@ -36,42 +36,36 @@ define(function(require, exports, module) {
             mode = "properties";
         }
         require([
-            extensionDirectory+'/codemirror/lib/codemirror.js',
+            extensionDirectory+"/codemirror/lib/codemirror",
+            extensionDirectory+"/codemirror/keymap/vim",
+            extensionDirectory+"/codemirror/addon/search/searchcursor",
+            extensionDirectory+"/codemirror/addon/dialog/dialog",
+            extensionDirectory+"/codemirror/addon/edit/matchbrackets",
+            extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
             'css!'+extensionDirectory+'/codemirror/lib/codemirror.css',
             'css!'+extensionDirectory+'/extension.css',
         ], function(CodeMirror) {
-            require([
-                //extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
-                extensionDirectory+"/codemirror/keymap/vim.js",
-                extensionDirectory+"/codemirror/addon/search/searchcursor",
-                extensionDirectory+"/codemirror/addon/dialog/dialog",
-                extensionDirectory+"/codemirror/addon/edit/matchbrackets",
-            ], function(vimInit, searchCursorInit, dialogInit, matchBracketsInit) {
-                vimInit(CodeMirror);
-                searchCursorInit(CodeMirror);
-                matchBracketsInit(CodeMirror)
-                cmEditor = CodeMirror(document.getElementById("code"), {
-                    fixedGutter: false,
-                    mode: mode,
-                    vimMode: true,
-                    lineNumbers: true,
-                    lineWrapping: true,
-                    tabSize: 4,
-                    collapseRange: true,
-                    matchBrackets: true,
-                    readOnly: isViewerMode,
-                    //theme: "lesser-dark",
-                     extraKeys: {
-                      "Cmd-S": function(instance) { TSCORE.FileOpener.saveFile() },
-                      "Ctrl-S": function(instance) { TSCORE.FileOpener.saveFile() },
-                      "Ctrl-Space": "autocomplete",
-                    }
-                });
-
-                //cmEditor.readOnly = isViewerMode;
-                cmEditor.setSize("100%","100%");
-                TSCORE.IO.loadTextFile(filePath);
+            cmEditor = CodeMirror(document.getElementById("code"), {
+                fixedGutter: false,
+                mode: mode,
+                vimMode: true,
+                lineNumbers: true,
+                lineWrapping: true,
+                tabSize: 4,
+                collapseRange: true,
+                matchBrackets: true,
+                readOnly: isViewerMode,
+                //theme: "lesser-dark",
+                 extraKeys: {
+                  "Cmd-S": function(instance) { TSCORE.FileOpener.saveFile() },
+                  "Ctrl-S": function(instance) { TSCORE.FileOpener.saveFile() },
+                  "Ctrl-Space": "autocomplete",
+                }
             });
+
+            //cmEditor.readOnly = isViewerMode;
+            cmEditor.setSize("100%","100%");
+            TSCORE.IO.loadTextFile(filePath);
         });
     };
 

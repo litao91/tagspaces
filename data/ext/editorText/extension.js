@@ -6,7 +6,6 @@ define(function(require, exports, module) {
 "use strict";
 
     console.log("Loading editorText extension");
-
     exports.id = "editorText"; // ID should be equal to the directory name where the ext. is located
     exports.title = "Text Editor based on codemirror";
     exports.type = "editor";
@@ -24,6 +23,7 @@ define(function(require, exports, module) {
 
     var cmEditor = undefined;
     var extensionDirectory = TSCORE.Config.getExtensionPath()+"/"+exports.id;
+    console.log(extensionDirectory);
 
 
     exports.init = function(filePath, containerElementID, isViewerMode) {
@@ -41,8 +41,8 @@ define(function(require, exports, module) {
             'css!'+extensionDirectory+'/extension.css',
         ], function(CodeMirror) {
             require([
-                extensionDirectory+"/codemirror/keymap/vim.js",
-                extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
+                //extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
+                //extensionDirectory+"/codemirror/keymap/vim.js",
             ], function() {
                 cmEditor = CodeMirror(document.getElementById("code"), {
                     fixedGutter: false,

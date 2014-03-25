@@ -5,6 +5,7 @@
 // at http://marijnhaverbeke.nl/blog/#cm-internals .
 
 (function(mod) {
+  console.log('loading codemirror');
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod();
   else if (typeof define == "function" && define.amd) // AMD

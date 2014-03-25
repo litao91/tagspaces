@@ -25,9 +25,27 @@ define(function(require, exports, module) {
         containerElID = containerElementID;
         currentFilePath = filePath;
         require(['css!'+extensionDirectory+'/viewerMD.css']);
-        require([extensionDirectory+'/showdown/showdown.js'], function() {
-            md2htmlConverter = new Showdown.converter();
-            TSCORE.IO.loadTextFile(filePath);
+        //require([extensionDirectory+'/showdown/showdown.js'], function() {
+            //md2htmlConverter = new Showdown.converter();
+            //TSCORE.IO.loadTextFile(filePath);
+        //});
+        require(['css!'+extensionDirectory+'/marked/default.css']);
+        require([extensionDirectory + '/marked/marked.js'], function(marked) {
+            require([extensionDirectory+'/marked/highlight.js'], function() {
+                var languageOverrides = {
+                  js: 'javascript',
+                  html: 'xml'
+                }
+                md2htmlConverter = {};
+                md2htmlConverter.makeHtml = marked;
+                md2htmlConverter.makeHtml.setOptions({
+                    highlight: function(code, lang){
+                        if(languageOverrides[lang]) lang = languageOverrides[lang];
+                        return hljs.LANGUAGES[lang] ? hljs.highlight(lang, code).value : code;
+                    }
+                });
+                TSCORE.IO.loadTextFile(filePath);
+            });
         });
     };
 

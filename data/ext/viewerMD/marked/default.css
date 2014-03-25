@@ -4,133 +4,133 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 
 */
 
-pre code {
+.viewerMDContainer pre code {
   display: block; padding: 0.5em;
   background: #F0F0F0;
 }
 
-pre code,
-pre .subst,
-pre .tag .title,
-pre .lisp .title,
-pre .clojure .built_in,
-pre .nginx .title {
+.viewerMDContainer pre code,
+.viewerMDContainer pre .subst,
+.viewerMDContainer pre .tag .title,
+.viewerMDContainer pre .lisp .title,
+.viewerMDContainer pre .clojure .built_in,
+.viewerMDContainer pre .nginx .title {
   color: black;
 }
 
-pre .string,
-pre .title,
-pre .constant,
-pre .parent,
-pre .tag .value,
-pre .rules .value,
-pre .rules .value .number,
-pre .preprocessor,
-pre .ruby .symbol,
-pre .ruby .symbol .string,
-pre .aggregate,
-pre .template_tag,
-pre .django .variable,
-pre .smalltalk .class,
-pre .addition,
-pre .flow,
-pre .stream,
-pre .bash .variable,
-pre .apache .tag,
-pre .apache .cbracket,
-pre .tex .command,
-pre .tex .special,
-pre .erlang_repl .function_or_atom,
-pre .markdown .header {
+.viewerMDContainer pre .string,
+.viewerMDContainer pre .title,
+.viewerMDContainer pre .constant,
+.viewerMDContainer pre .parent,
+.viewerMDContainer pre .tag .value,
+.viewerMDContainer pre .rules .value,
+.viewerMDContainer pre .rules .value .number,
+.viewerMDContainer pre .preprocessor,
+.viewerMDContainer pre .ruby .symbol,
+.viewerMDContainer pre .ruby .symbol .string,
+.viewerMDContainer pre .aggregate,
+.viewerMDContainer pre .template_tag,
+.viewerMDContainer pre .django .variable,
+.viewerMDContainer pre .smalltalk .class,
+.viewerMDContainer pre .addition,
+.viewerMDContainer pre .flow,
+.viewerMDContainer pre .stream,
+.viewerMDContainer pre .bash .variable,
+.viewerMDContainer pre .apache .tag,
+.viewerMDContainer pre .apache .cbracket,
+.viewerMDContainer pre .tex .command,
+.viewerMDContainer pre .tex .special,
+.viewerMDContainer pre .erlang_repl .function_or_atom,
+.viewerMDContainer pre .markdown .header {
   color: #800;
 }
 
-pre .comment,
-pre .annotation,
-pre .template_comment,
-pre .diff .header,
-pre .chunk,
-pre .markdown .blockquote {
+.viewerMDContainer pre .comment,
+.viewerMDContainer pre .annotation,
+.viewerMDContainer pre .template_comment,
+.viewerMDContainer pre .diff .header,
+.viewerMDContainer pre .chunk,
+.viewerMDContainer pre .markdown .blockquote {
   color: #888;
 }
 
-pre .number,
-pre .date,
-pre .regexp,
-pre .literal,
-pre .smalltalk .symbol,
-pre .smalltalk .char,
-pre .go .constant,
-pre .change,
-pre .markdown .bullet,
-pre .markdown .link_url {
+.viewerMDContainer pre .number,
+.viewerMDContainer pre .date,
+.viewerMDContainer pre .regexp,
+.viewerMDContainer pre .literal,
+.viewerMDContainer pre .smalltalk .symbol,
+.viewerMDContainer pre .smalltalk .char,
+.viewerMDContainer pre .go .constant,
+.viewerMDContainer pre .change,
+.viewerMDContainer pre .markdown .bullet,
+.viewerMDContainer pre .markdown .link_url {
   color: #080;
 }
 
-pre .label,
-pre .javadoc,
-pre .ruby .string,
-pre .decorator,
-pre .filter .argument,
-pre .localvars,
-pre .array,
-pre .attr_selector,
-pre .important,
-pre .pseudo,
-pre .pi,
-pre .doctype,
-pre .deletion,
-pre .envvar,
-pre .shebang,
-pre .apache .sqbracket,
-pre .nginx .built_in,
-pre .tex .formula,
-pre .erlang_repl .reserved,
-pre .prompt,
-pre .markdown .link_label,
-pre .vhdl .attribute,
-pre .clojure .attribute,
-pre .coffeescript .property {
+.viewerMDContainer pre .label,
+.viewerMDContainer pre .javadoc,
+.viewerMDContainer pre .ruby .string,
+.viewerMDContainer pre .decorator,
+.viewerMDContainer pre .filter .argument,
+.viewerMDContainer pre .localvars,
+.viewerMDContainer pre .array,
+.viewerMDContainer pre .attr_selector,
+.viewerMDContainer pre .important,
+.viewerMDContainer pre .pseudo,
+.viewerMDContainer pre .pi,
+.viewerMDContainer pre .doctype,
+.viewerMDContainer pre .deletion,
+.viewerMDContainer pre .envvar,
+.viewerMDContainer pre .shebang,
+.viewerMDContainer pre .apache .sqbracket,
+.viewerMDContainer pre .nginx .built_in,
+.viewerMDContainer pre .tex .formula,
+.viewerMDContainer pre .erlang_repl .reserved,
+.viewerMDContainer pre .prompt,
+.viewerMDContainer pre .markdown .link_label,
+.viewerMDContainer pre .vhdl .attribute,
+.viewerMDContainer pre .clojure .attribute,
+.viewerMDContainer pre .coffeescript .property {
   color: #88F
 }
 
-pre .keyword,
-pre .id,
-pre .phpdoc,
-pre .title,
-pre .built_in,
-pre .aggregate,
-pre .css .tag,
-pre .javadoctag,
-pre .phpdoc,
-pre .yardoctag,
-pre .smalltalk .class,
-pre .winutils,
-pre .bash .variable,
-pre .apache .tag,
-pre .go .typename,
-pre .tex .command,
-pre .markdown .strong,
-pre .request,
-pre .status {
+.viewerMDContainer pre .keyword,
+.viewerMDContainer pre .id,
+.viewerMDContainer pre .phpdoc,
+.viewerMDContainer pre .title,
+.viewerMDContainer pre .built_in,
+.viewerMDContainer pre .aggregate,
+.viewerMDContainer pre .css .tag,
+.viewerMDContainer pre .javadoctag,
+.viewerMDContainer pre .phpdoc,
+.viewerMDContainer pre .yardoctag,
+.viewerMDContainer pre .smalltalk .class,
+.viewerMDContainer pre .winutils,
+.viewerMDContainer pre .bash .variable,
+.viewerMDContainer pre .apache .tag,
+.viewerMDContainer pre .go .typename,
+.viewerMDContainer pre .tex .command,
+.viewerMDContainer pre .markdown .strong,
+.viewerMDContainer pre .request,
+.viewerMDContainer pre .status {
   font-weight: bold;
 }
 
-pre .markdown .emphasis,
-pre .comment {
+.viewerMDContainer pre .markdown .emphasis,
+.viewerMDContainer pre .comment {
   font-style: italic;
 }
 
-pre .nginx .built_in {
+.viewerMDContainer pre .nginx .built_in {
   font-weight: normal;
 }
 
-pre .coffeescript .javascript,
-pre .javascript .xml,
-pre .tex .formula,
-pre .xml .javascript,
-pre .xml .vbscript,
-pre .xml .css,
-pre .xml .cdata {
+.viewerMDContainer pre .coffeescript .javascript,
+.viewerMDContainer pre .javascript .xml,
+.viewerMDContainer pre .tex .formula,
+.viewerMDContainer pre .xml .javascript,
+.viewerMDContainer pre .xml .vbscript,
+.viewerMDContainer pre .xml .css,
+.viewerMDContainer pre .xml .cdata {
   opacity: 0.5;
 }

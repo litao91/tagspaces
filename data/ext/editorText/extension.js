@@ -42,8 +42,14 @@ define(function(require, exports, module) {
         ], function(CodeMirror) {
             require([
                 //extensionDirectory+"/codemirror/mode/" + mode + "/" + mode + ".js",
-                //extensionDirectory+"/codemirror/keymap/vim.js",
-            ], function() {
+                extensionDirectory+"/codemirror/keymap/vim.js",
+                extensionDirectory+"/codemirror/addon/search/searchcursor",
+                extensionDirectory+"/codemirror/addon/dialog/dialog",
+                extensionDirectory+"/codemirror/addon/edit/matchbrackets",
+            ], function(vimInit, searchCursorInit, dialogInit, matchBracketsInit) {
+                vimInit(CodeMirror);
+                searchCursorInit(CodeMirror);
+                matchBracketsInit(CodeMirror)
                 cmEditor = CodeMirror(document.getElementById("code"), {
                     fixedGutter: false,
                     mode: mode,

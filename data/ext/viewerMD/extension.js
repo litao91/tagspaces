@@ -30,22 +30,23 @@ define(function(require, exports, module) {
             //TSCORE.IO.loadTextFile(filePath);
         //});
         require(['css!'+extensionDirectory+'/marked/default.css']);
-        require([extensionDirectory + '/marked/marked.js'], function(marked) {
-            require([extensionDirectory+'/marked/highlight.js'], function() {
-                var languageOverrides = {
-                  js: 'javascript',
-                  html: 'xml'
+        require([extensionDirectory + '/marked/marked',
+                extensionDirectory+'/marked/highlight',
+        ], function(marked) {
+            var languageOverrides = {
+              js: 'javascript',
+              html: 'xml'
+            }
+            md2htmlConverter = {};
+            md2htmlConverter.makeHtml = marked;
+            md2htmlConverter.makeHtml.setOptions({
+                highlight: function(code, lang){
+                    if(languageOverrides[lang]) lang = languageOverrides[lang];
+                    return hljs.LANGUAGES[lang] ? hljs.highlight(lang, code).value : code;
                 }
-                md2htmlConverter = {};
-                md2htmlConverter.makeHtml = marked;
-                md2htmlConverter.makeHtml.setOptions({
-                    highlight: function(code, lang){
-                        if(languageOverrides[lang]) lang = languageOverrides[lang];
-                        return hljs.LANGUAGES[lang] ? hljs.highlight(lang, code).value : code;
-                    }
-                });
-                TSCORE.IO.loadTextFile(filePath);
             });
+            TSCORE.IO.loadTextFile(filePath);
+
         });
     };
 
@@ -58,28 +59,33 @@ define(function(require, exports, module) {
     };
 
     exports.setContent = function(content) {
-        var UTF8_BOM = "\ufeff";
+        require([ extensionDirectory+'/mathjax/MathJax.js?config=TeX-AMS_HTML',], function() {
+            var UTF8_BOM = "\ufeff";
 
-       // removing the UTF8 bom because it brakes thing like #header1 in the beginning of the document
-       if(content.indexOf(UTF8_BOM) == 0) {
-           content = content.substring(1,content.length);
-       }
-
-       var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
-       $('#'+containerElID).append($("<div>", {
-            class: "viewerMDContainer",
-        }).append(md2htmlConverter.makeHtml(cleanedContent)));
-
-       var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
-
-       $('#'+containerElID+" img[src]").each(function(){
-           var currentSrc = $( this ).attr("src");
-           if(currentSrc.indexOf("http://") == 0 || currentSrc.indexOf("https://") == 0) {
-               // do nothing if src begins with http(s)://
-           } else {
-               $( this ).attr("src","file://"+fileDirectory+TSCORE.dirSeparator+currentSrc);
+           // removing the UTF8 bom because it brakes thing like #header1 in the beginning of the document
+           if(content.indexOf(UTF8_BOM) == 0) {
+               content = content.substring(1,content.length);
            }
-       });
+
+           var cleanedContent = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,"");
+           $('#'+containerElID).append($("<div>", {
+                class: "viewerMDContainer",
+            }).append(md2htmlConverter.makeHtml(cleanedContent)));
+
+
+           var fileDirectory = TSCORE.TagUtils.extractContainingDirectoryPath(currentFilePath);
+
+           $('#'+containerElID+" img[src]").each(function(){
+               var currentSrc = $( this ).attr("src");
+               if(currentSrc.indexOf("http://") == 0 || currentSrc.indexOf("https://") == 0) {
+                   // do nothing if src begins with http(s)://
+               } else {
+                   $( this ).attr("src","file://"+fileDirectory+TSCORE.dirSeparator+currentSrc);
+               }
+           });
+            MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});
+            MathJax.Hub.Startup.onload();
+        });
     };
 
     exports.getContent = function() {

@@ -1,7 +1,19 @@
 .viewerMDContainer *{margin:0;padding:0;}
 
 .viewerMDContainer {
-    margin: 10px;
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    background-color:rgb(255, 255, 255);
+    /*border-radius:4px;*/
+    /*box-shadow: rgb(211, 211, 211) 0px 0px 20px 3px;*/
+    box-shadow:rgba(0,0,0,0.07) 0 1px 5px inset;
+    border-radius:3px;
+    -moz-border-radius:3px;border-radius:3px;
+    padding:20px;
 }
 
 .viewerMDContainer {

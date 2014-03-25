@@ -45,6 +45,9 @@ define(function(require, exports, module) {
             'css!'+extensionDirectory+'/codemirror/lib/codemirror.css',
             'css!'+extensionDirectory+'/extension.css',
         ], function(CodeMirror) {
+            CodeMirror.commands.save = function() {
+                TSCORE.FileOpener.saveFile()
+            }
             cmEditor = CodeMirror(document.getElementById("code"), {
                 fixedGutter: false,
                 mode: mode,

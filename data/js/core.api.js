@@ -2,6 +2,27 @@
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
 
+/*
+ * This module requires the following, defined in loader.js
+'jquery',
+'jqueryui',
+'jqueryuidraggable',
+'jqueryuidroppable',
+'jqueryuiresizable',
+'jqueryuiposition',
+'jqueryuiselectable',
+'jqueryuisortable',
+'hammerjs',
+'bootstrap',
+'bootstrap3xeditable',
+'jquerysimplecolorpicker',
+'jquerylayout',
+'i18next',
+'mousetrap',
+'select2',
+'handlebarsjs',
+'tssettingsdefault',
+*/
 // The TSCORE
 define(function(require, exports, module) {
 "use strict";
@@ -10,7 +31,6 @@ define(function(require, exports, module) {
 
     var tsSettings = require("tssetting");
     var tsIOApi = require("tsioapi");
-  //  var tsIOApiDropbox = require("tsioapidropbox");
     var tsPersManager = require("tspersmanager");
     var tsTagUtils = require("tstagutils");
     var tsFileOpener = require("tsfileopener");
@@ -18,6 +38,7 @@ define(function(require, exports, module) {
     var tsDirectoriesUI = require("tsdirectoriesui");
     var tsCoreUI = require("tscoreui");
     var tsSearch = require("tssearch");
+    var tsIOApiDropbox = require("tsioapidropbox");
 
     var currentPath = undefined;
     var currentView = undefined;
@@ -76,11 +97,12 @@ define(function(require, exports, module) {
         tsPersManager.initPerspectives();
 
         hideLoadingAnimation();
+        // UI Done
 
         $(document).ready(function() {
+            initKeyBindings();
             initLayout();
             initI18N();
-            initKeyBindings();
             $( "#loading" ).hide();
 
             // Show start hint by no last location
@@ -279,17 +301,27 @@ define(function(require, exports, module) {
     var isFullWidth = false;
     var shouldOpenCol1 = true;
     var shouldOpenCol3 = false;
-    var col1DefaultWidth = 250;
+    var col1DefaultWidth = 180;
 
     // End Layout Vars
 
     function reLayout() {
         //console.log("Window w: "+window.innerWidth+" h: "+window.innerHeight+" orient: "+window.orientation+" dpi: "+window.devicePixelRatio);
         var fullWidth = window.innerWidth;
-        var halfWidth =  Math.round(window.innerWidth/2);
-        var isPortret = fullWidth < window.innerHeight;
+        var halfWidth =  Math.round(window.innerWidth / 2);
+        var isPortrait = fullWidth < window.innerHeight;
         var oneColumn = fullWidth < 660;
         var twoColumn = (fullWidth >= 660 && fullWidth < 1024);
+        var centerMinWidth = 350;
+        var eastWidth = function() {
+            var westSize = 0;
+            if(!layoutContainer.state.west.isClosed) {
+                westSize = layoutContainer.west.state.size;
+            }
+            return window.innerWidth - westSize - centerMinWidth;
+        }
+
+        //var eastWidth = Math.round(window.innerWidth * 0.65);
 
         $("#toggleFullWidthButton").hide();
 
@@ -301,7 +333,7 @@ define(function(require, exports, module) {
                 layoutContainer.sizePane("east", fullWidth); // make col3 100%
             } else {
                 if(!layoutContainer.state.west.isClosed) {
-                    if(isPortret) {
+                    if(isPortrait) {
                         // by opened col1 panel make it 75%
                         layoutContainer.sizePane("west", Math.round(3*(window.innerWidth/4)));
                     } else {
@@ -311,7 +343,7 @@ define(function(require, exports, module) {
             }
         } else if(twoColumn) {
             //$("#closeLeftPanel").show();
-            if(isPortret) {
+            if(isPortrait) {
                 if(shouldOpenCol3) {
                     layoutContainer.close("west"); // workarround
                     shouldOpenCol1 = false; //Closing col1
@@ -325,7 +357,7 @@ define(function(require, exports, module) {
             } else {
                 if(shouldOpenCol3) {
                     shouldOpenCol1 = false; //Closing col1
-                    layoutContainer.sizePane("east", halfWidth); // make col3 100%
+                    layoutContainer.sizePane("east", eastWidth()); // make col3 100%
                 } else {
                     // by opened col1 panel make it 250
                     if(!layoutContainer.state.west.isClosed) {
@@ -335,7 +367,7 @@ define(function(require, exports, module) {
             }
         } else { // Regular case
             $("#closeLeftPanel").hide();
-            if(isPortret) {
+            if(isPortrait) {
                 if(shouldOpenCol3) {
                     layoutContainer.close("west"); // workarround
                     shouldOpenCol1 = false; //Closing col1
@@ -357,7 +389,7 @@ define(function(require, exports, module) {
                 } else {
                     $("#viewerContainer").css("top","81px");
                     layoutContainer.sizePane("west", col1DefaultWidth);
-                    layoutContainer.sizePane("east", halfWidth);
+                    layoutContainer.sizePane("east", eastWidth());
                 }
             }
         }
@@ -368,6 +400,7 @@ define(function(require, exports, module) {
         // Handle opening col3
         shouldOpenCol3?layoutContainer.open("east"):layoutContainer.close("east");
     }
+
 
     function openFileViewer() {
         tsCoreUI.hideAllDropDownMenus();
@@ -399,82 +432,85 @@ define(function(require, exports, module) {
 
     $( window ).on('resize', reLayout);
 
+    /**
+     * ------------------Layout Initialization--------------------------------
+     */
     function initLayout (){
         console.log("Initializing Layout...");
 
+        // jquery layout plugin
         layoutContainer = $('body').layout({
-            name:            'outerLayout' // for debugging & auto-adding buttons (see below)
-        ,   fxName:         "none" // none, slide
-           //,   fxSpeed:        "normal"
-        ,    autoResize:        true    // try to maintain pane-percentages
-        ,    autoReopen:        true    // auto-open panes that were previously auto-closed due to 'no room'
-        ,   minSize:        1
-        ,    autoBindCustomButtons:    true
-        ,    west__paneSelector:     '.col1'
-        ,    center__paneSelector:     '.col2'
-        ,    east__paneSelector:     '.col3'
-        ,    west__size:         col1DefaultWidth
-        ,   west__minWidth:     col1DefaultWidth
-        ,    east__size:         0.5
-        ,   west__spacing_open:         1
-        ,   east__spacing_open:         1
-        ,    center_minWidth:            1
-        ,    center_minHeight:            200
-        ,   spacing_closed:        0
-        ,    noRoomToOpenAction:    "hide" // 'close' or 'hide' when no room to open a pane at minSize
-    //    ,   west__showOverflowOnHover:    true
-    //    ,   center__showOverflowOnHover:    true
-    //    ,   east__showOverflowOnHover:    true
-        ,   enableCursorHotkey:         false
+            name                        : 'outerLayout'    // for debugging & auto-adding buttons (see below)
+          , fxName                      : "none"           // none, the effects are very stupid
+       // , fxSpeed                     : "normal"
+          , autoResize                  : true             // try to maintain pane-percentages
+          , autoReopen                  : true             // auto-open panes that were previously auto-closed due to 'no room'
+          , minSize                     : 1
+          , autoBindCustomButtons       : true
+          , west__paneSelector          : '.col1'
+          , center__paneSelector        : '.col2'
+          , east__paneSelector          : '.col3'
+          , west__size                  : col1DefaultWidth
+          , west__minWidth              : col1DefaultWidth
+          , east__size                  : 0.8
+          , west__spacing_open          : 1
+          , east__spacing_open          : 1
+          , center_minWidth             : 350
+          , center_minHeight            : 200
+          , spacing_closed              : 0
+          , noRoomToOpenAction          : "hide"           // 'close' or 'hide' when no room to open a pane at minSize
+       // , west__showOverflowOnHover   : true
+       // , center__showOverflowOnHover : true
+       // , east__showOverflowOnHover   : true
+          , enableCursorHotkey          : false
         });
 
         // Initially close the right panel
         layoutContainer.close("east");
 
         col1Layout = layoutContainer.panes.west.layout({
-            name:            'col1Layout' // for debugging & auto-adding buttons (see below)
-    //    ,    north__paneSelector:     '.row1'
-        ,    center__paneSelector:     '.row2'
-        ,    south__paneSelector:     '.row3'
-    //    ,    north__size:         row1Height    // percentage size expresses as a string
-        ,    south__size:         row3Height
-        ,   north__spacing_open:        0
-        ,   south__spacing_open:        0
-        ,    autoResize:        false    // try to maintain pane-percentages
-        ,    closable:        false
-        ,    togglerLength_open:    0    // hide toggler-buttons
-        ,    spacing_closed:        0    // hide resizer/slider bar when closed
-        //,    autoReopen:        true    // auto-open panes that were previously auto-closed due to 'no room'
-        ,    autoBindCustomButtons:    true
-        ,    minSize:        1
-        ,    center__minHeight:    25
-    //    ,   north__showOverflowOnHover:    true
-    //    ,   center__showOverflowOnHover:    true
-    //    ,   south__showOverflowOnHover:    true
-        ,   enableCursorHotkey:         false
+             name                        : 'col1Layout' // for debugging & auto-adding buttons (see below)
+           , center__paneSelector        : '.row2'
+           , south__paneSelector         : '.row3'
+           , south__size                 : row3Height
+           , north__spacing_open         : 0
+           , south__spacing_open         : 0
+           , autoResize                  : false        // try to maintain pane-percentages
+           , closable                    : false
+           , togglerLength_open          : 0            // hide toggler-buttons
+           , spacing_closed              : 0            // hide resizer/slider bar when closed
+           , autoBindCustomButtons       : true
+           , minSize                     : 1
+           , center__minHeight           : 25
+           , enableCursorHotkey          : false
+    //     , north__paneSelector         : '.row1'
+    //     , north__showOverflowOnHover  : true
+    //     , center__showOverflowOnHover : true
+    //     , south__showOverflowOnHover  : true
+        // , autoReopen                  : true    // auto-open panes that were previously auto-closed due to 'no room'
         });
 
         col2Layout = layoutContainer.panes.center.layout({
-            name:            'col2Layout' // for debugging & auto-adding buttons (see below)
+          name                       : 'col2Layout' // for debugging & auto-adding buttons (see below)
+        , center__paneSelector       : '.row2'
+        , south__paneSelector        : '.row3'
+        , south__size                : row3Height
+        , north__spacing_open        : 0
+        , south__spacing_open        : 0
+        , autoResize                 : true         // try to maintain pane-percentages
+        , closable                   : false
+        , togglerLength_open         : 0            // hide toggler-buttons
+        , spacing_closed             : 0            // hide resizer/slider bar when closed
+        , autoReopen                 : true         // auto-open panes that were previously auto-closed due to 'no room'
+        , autoBindCustomButtons      : true
+        , minSize                    : 1
+        , center__minHeight          : 25
+        , north__showOverflowOnHover : true
+        , enableCursorHotkey         : false
     //    ,    north__paneSelector:     '.row1'
-        ,    center__paneSelector:     '.row2'
-        ,    south__paneSelector:     '.row3'
-    //    ,    north__size:         row1Height    // percentage size expresses as a string
-        ,    south__size:         row3Height
-        ,   north__spacing_open:        0
-        ,   south__spacing_open:        0
-        ,    autoResize:        true    // try to maintain pane-percentages
-        ,    closable:        false
-        ,    togglerLength_open:    0    // hide toggler-buttons
-        ,    spacing_closed:        0    // hide resizer/slider bar when closed
-        ,    autoReopen:        true    // auto-open panes that were previously auto-closed due to 'no room'
-        ,    autoBindCustomButtons:    true
-        ,    minSize:        1
-        ,    center__minHeight:    25
-        ,   north__showOverflowOnHover:    true
     //    ,   center__showOverflowOnHover:    true
     //    ,   south__showOverflowOnHover:    true
-        ,   enableCursorHotkey:         false
+    //    ,    north__size:         row1Height    // percentage size expresses as a string
         });
 
     /*
@@ -506,85 +542,85 @@ define(function(require, exports, module) {
 
 
     // Proxying applications parts
-    exports.Config = tsSettings;
-    exports.IO = tsIOApi;
+    exports.Config             = tsSettings;
+    exports.IO                 = tsIOApi;
     exports.PerspectiveManager = tsPersManager;
-    exports.TagUtils = tsTagUtils;
-    exports.FileOpener = tsFileOpener;
-    exports.Search = tsSearch;
+    exports.TagUtils           = tsTagUtils;
+    exports.FileOpener         = tsFileOpener;
+    exports.Search             = tsSearch;
 
     // Public API definition
-    exports.initApp                     = initApp;
-    exports.updateLogger                = updateLogger;
-    exports.showLoadingAnimation         = showLoadingAnimation;
-    exports.hideLoadingAnimation         = hideLoadingAnimation;
+    exports.initApp              = initApp;
+    exports.updateLogger         = updateLogger;
+    exports.showLoadingAnimation = showLoadingAnimation;
+    exports.hideLoadingAnimation = hideLoadingAnimation;
+    exports.reloadUI             = reloadUI;
+    exports.openFileViewer       = openFileViewer;
+    exports.closeFileViewer      = closeFileViewer;
+    exports.toggleLeftPanel      = toggleLeftPanel;
+    exports.toggleFullWidth      = toggleFullWidth;
+    exports.updateNewVersionData = updateNewVersionData;
+    exports.exportFileListCSV    = exportFileListCSV;
+    exports.exportFileListArray  = exportFileListArray;
+    exports.removeFileModel      = removeFileModel;
+    exports.updateFileModel      = updateFileModel;
 //    exports.fileExists                     = fileExists;
-    exports.reloadUI                     = reloadUI;
-    exports.openFileViewer                 = openFileViewer;
-    exports.closeFileViewer             = closeFileViewer;
-    exports.toggleLeftPanel             = toggleLeftPanel;
-    exports.toggleFullWidth             = toggleFullWidth;
-    exports.updateNewVersionData        = updateNewVersionData;
-    exports.exportFileListCSV           = exportFileListCSV;
-    exports.exportFileListArray         = exportFileListArray;
-    exports.removeFileModel             = removeFileModel;
-    exports.updateFileModel             = updateFileModel;
 
     // Proxying functions from tsCoreUI
-    exports.clearSearchFilter           = tsCoreUI.clearSearchFilter;
-    exports.enableTopToolbar            = tsCoreUI.enableTopToolbar;
-    exports.disableTopToolbar           = tsCoreUI.disableTopToolbar;
-    exports.showAlertDialog             = tsCoreUI.showAlertDialog;
-    exports.showConfirmDialog            = tsCoreUI.showConfirmDialog;
-    exports.showTagEditDialog           = tsCoreUI.showTagEditDialog;
-    exports.hideAllDropDownMenus        = tsCoreUI.hideAllDropDownMenus;
-    exports.showFileCreateDialog        = tsCoreUI.showFileCreateDialog;
-    exports.showFileRenameDialog        = tsCoreUI.showFileRenameDialog;
-    exports.showFileDeleteDialog        = tsCoreUI.showFileDeleteDialog;
-    exports.showLocationsPanel            = tsCoreUI.showLocationsPanel;
-    exports.showTagsPanel                = tsCoreUI.showTagsPanel;
-    exports.showContextMenu                = tsCoreUI.showContextMenu;
-    exports.showDirectoryBrowserDialog  = tsCoreUI.showDirectoryBrowserDialog;
+    exports.clearSearchFilter          = tsCoreUI.clearSearchFilter;
+    exports.enableTopToolbar           = tsCoreUI.enableTopToolbar;
+    exports.disableTopToolbar          = tsCoreUI.disableTopToolbar;
+    exports.showAlertDialog            = tsCoreUI.showAlertDialog;
+    exports.showConfirmDialog          = tsCoreUI.showConfirmDialog;
+    exports.showTagEditDialog          = tsCoreUI.showTagEditDialog;
+    exports.hideAllDropDownMenus       = tsCoreUI.hideAllDropDownMenus;
+    exports.showFileCreateDialog       = tsCoreUI.showFileCreateDialog;
+    exports.showFileRenameDialog       = tsCoreUI.showFileRenameDialog;
+    exports.showFileDeleteDialog       = tsCoreUI.showFileDeleteDialog;
+    exports.showLocationsPanel         = tsCoreUI.showLocationsPanel;
+    exports.showTagsPanel              = tsCoreUI.showTagsPanel;
+    exports.showContextMenu            = tsCoreUI.showContextMenu;
+    exports.showDirectoryBrowserDialog = tsCoreUI.showDirectoryBrowserDialog;
 
     // Proxying functions from tsTagsUI
-    exports.generateTagButtons             = tsTagsUI.generateTagButtons;
-    exports.generateExtButton           = tsTagsUI.generateExtButton;
-    exports.generateTagStyle            = tsTagsUI.generateTagStyle;
-    exports.openTagMenu                 = tsTagsUI.openTagMenu;
-    exports.showAddTagsDialog            = tsTagsUI.showAddTagsDialog;
-    exports.showTagEditInTreeDialog     = tsTagsUI.showTagEditInTreeDialog;
-    exports.showDialogTagCreate         = tsTagsUI.showDialogTagCreate;
-    exports.showDialogEditTagGroup      = tsTagsUI.showDialogEditTagGroup;
-    exports.showDialogTagGroupCreate    = tsTagsUI.showDialogTagGroupCreate;
-    exports.calculatedTags              = tsTagsUI.calculatedTags;
-    exports.generateTagGroups           = tsTagsUI.generateTagGroups;
+    exports.generateTagButtons       = tsTagsUI.generateTagButtons;
+    exports.generateExtButton        = tsTagsUI.generateExtButton;
+    exports.generateTagStyle         = tsTagsUI.generateTagStyle;
+    exports.openTagMenu              = tsTagsUI.openTagMenu;
+    exports.showAddTagsDialog        = tsTagsUI.showAddTagsDialog;
+    exports.showTagEditInTreeDialog  = tsTagsUI.showTagEditInTreeDialog;
+    exports.showDialogTagCreate      = tsTagsUI.showDialogTagCreate;
+    exports.showDialogEditTagGroup   = tsTagsUI.showDialogEditTagGroup;
+    exports.showDialogTagGroupCreate = tsTagsUI.showDialogTagGroupCreate;
+    exports.calculatedTags           = tsTagsUI.calculatedTags;
+    exports.generateTagGroups        = tsTagsUI.generateTagGroups;
 
     // Proxying functions from directoriesUI
-    exports.openLocation                = tsDirectoriesUI.openLocation;
-    exports.updateSubDirs                 = tsDirectoriesUI.updateSubDirs;
-    exports.initLocations                 = tsDirectoriesUI.initLocations;
-    exports.showCreateDirectoryDialog   = tsDirectoriesUI.showCreateDirectoryDialog;
-    exports.closeCurrentLocation        = tsDirectoriesUI.closeCurrentLocation;
-    exports.navigateToDirectory         = tsDirectoriesUI.navigateToDirectory;
+    exports.openLocation              = tsDirectoriesUI.openLocation;
+    exports.updateSubDirs             = tsDirectoriesUI.updateSubDirs;
+    exports.initLocations             = tsDirectoriesUI.initLocations;
+    exports.showCreateDirectoryDialog = tsDirectoriesUI.showCreateDirectoryDialog;
+    exports.closeCurrentLocation      = tsDirectoriesUI.closeCurrentLocation;
+    exports.navigateToDirectory       = tsDirectoriesUI.navigateToDirectory;
 
     // Public variables definition
-    exports.currentPath                 = currentPath;
-    exports.currentView                 = currentView;
-    exports.selectedFiles                 = selectedFiles;
-    exports.fileList                     = fileList;
-    exports.selectedTag                 = selectedTag;
-    exports.selectedTagData             = selectedTagData;
-    exports.startTime                   = startTime;
-    exports.subfoldersDirBrowser        = subfoldersDirBrowser;
-    exports.directoryBrowser            = directoryBrowser;
+    exports.currentPath          = currentPath;
+    exports.currentView          = currentView;
+    exports.selectedFiles        = selectedFiles;
+    exports.fileList             = fileList;
+    exports.selectedTag          = selectedTag;
+    exports.selectedTagData      = selectedTagData;
+    exports.startTime            = startTime;
+    exports.subfoldersDirBrowser = subfoldersDirBrowser;
+    exports.directoryBrowser     = directoryBrowser;
 
-    exports.fileListFILEEXT             = 0;
-    exports.fileListTITLE               = 1;
-    exports.fileListTAGS                = 2;
-    exports.fileListFILESIZE            = 3;
-    exports.fileListFILELMDT            = 4;
-    exports.fileListFILEPATH            = 5;
-    exports.fileListFILENAME            = 6;
+    exports.fileListFILEEXT  = 0;
+    exports.fileListTITLE    = 1;
+    exports.fileListTAGS     = 2;
+    exports.fileListFILESIZE = 3;
+    exports.fileListFILELMDT = 4;
+    exports.fileListFILEPATH = 5;
+    exports.fileListFILENAME = 6;
 
     exports.dirSeparator                = isWin?"\\":"/";
 

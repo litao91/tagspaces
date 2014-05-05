@@ -3,7 +3,7 @@
  * is governed by a AGPL3 license that can be
  * found in the LICENSE file. */
 @font-face {
-  font-family: 'Helvetica';
+  font-family: 'Ubuntu';
   font-style: normal;
   font-weight: normal;
   src: url(Ubuntu-R.woff) format('woff');
@@ -24,7 +24,7 @@ html, body {
 body.osx {
     /*font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
      *
-     *//
+     */
 }
 
 /* Removes the selection border on ui elements on android */

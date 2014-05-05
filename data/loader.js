@@ -167,7 +167,7 @@ define(function (require, exports, module) {
     }
 
     var TSCORE = undefined;
-    requirejs(['tscore','underscore'], function (core,_) {
+    require(['tscore','underscore'], function (core,_) {
         TSCORE = core;
         TSCORE.initApp();
     });

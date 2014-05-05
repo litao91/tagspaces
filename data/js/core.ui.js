@@ -1,6 +1,7 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that
  * can be found in the LICENSE file. */
+/* global define, Handlebars, isNode, isFirefox  */
 define(function(require, exports, module) {
 "use strict";
 
@@ -8,11 +9,11 @@ define(function(require, exports, module) {
 
     var TSCORE = require("tscore");
 
-    var fileContent = undefined;
-    var fileType = undefined;
+    var fileContent;
+    var fileType;
 
     var showAlertDialog = function(message, title) {
-        if (!title) { title = 'Alert'; }
+        if (!title) { title = $.i18n.t("ns.dialogs:titleAlert"); }
         if (!message) { message = 'No Message to Display.'; }
 
         var alertModal = $('#alertDialog');
@@ -20,33 +21,39 @@ define(function(require, exports, module) {
         alertModal.find('.modal-body').empty();
         alertModal.find('.modal-body').text(message);
         alertModal.find('#okButton')
-           .off('click')
-           .click(function(event) {
+            .off('click')
+            .click(function() {
                alertModal.modal('hide');
-           }
+            }
         );
 
         alertModal.modal({backdrop: 'static',show: true});
     };
 
-    var showConfirmDialog = function(title, message, okCallback, cancelCallback) {
-        if (!title) { title = 'Confirm'; }
+    var showConfirmDialog = function(title, message, okCallback, cancelCallback, confirmShowNextTime) {
+        if (!title) { title = $.i18n.t("ns.dialogs:titleConfirm"); }
         if (!message) { message = 'No Message to Display.'; }
 
         var confirmModal = $('#confirmDialog');
+
+        if(confirmShowNextTime) {
+            confirmModal.find('#showThisDialogAgain').prop('checked', true);
+        } else {
+            confirmModal.find('#showThisDialogAgainContainer').hide();
+        }
+
         confirmModal.find('h4').text(title);
-        confirmModal.find('.modal-body').empty();
-        confirmModal.find('.modal-body').text(message);
-        confirmModal.find('#okButton')
-           .off('click')
-           .click(function(event) {
-               okCallback();
+        confirmModal.find('#dialogContent').text(message);
+        confirmModal.find('#confirmButton')
+            .off('click')
+            .click(function() {
+               okCallback(confirmModal.find('#showThisDialogAgain').prop('checked'));
                confirmModal.modal('hide');
-           }
+            }
         );
         confirmModal.find('#cancelButton')
-           .off('click')
-           .click(function(event) {
+            .off('click')
+            .click(function() {
                if(cancelCallback != undefined) {
                    cancelCallback();
                }
@@ -67,7 +74,8 @@ define(function(require, exports, module) {
             multiple: true,
             tags: TSCORE.Config.getAllTags(),
             tokenSeparators: [",", " "],
-            minimumInputLength: 2
+            minimumInputLength: 2,
+            selectOnBlur: true
         });
 
         $("#newFileName").val("");
@@ -90,8 +98,8 @@ define(function(require, exports, module) {
     var showFileDeleteDialog = function(filePath) {
         console.log("Deleting file...");
         TSCORE.showConfirmDialog(
-            "Delete File(s)",
-            "The file \""+filePath+"\" will be permanently deleted and cannot be recovered. Are you sure?",
+            $.i18n.t("ns.dialogs:fileDeleteTitleConfirm"),
+            $.i18n.t("ns.dialogs:fileDeleteContentConfirm", {filePath: filePath}),
             function() {
                 TSCORE.IO.deleteElement(filePath);
             }
@@ -100,15 +108,6 @@ define(function(require, exports, module) {
 
     var showTagEditDialog = function() {
         $( "#newTagName" ).val(TSCORE.selectedTag);
-
-        /* $( "#newTagName" ).select2('data', null);
-        $( "#newTagName" ).select2({
-            multiple: false,
-            tags: TSCORE.Config.getAllTags(),
-            tokenSeparators: [",", " "],
-            minimumInputLength: 2
-        });  */
-
         $( '#dialogEditTag' ).modal({backdrop: 'static',show: true});
     };
 
@@ -123,6 +122,7 @@ define(function(require, exports, module) {
                     $('body').append(uiTemplate());
                     TSCORE.directoryBrowser.initUI();
                 }
+                $("#directoryBrowserDialog").i18n();
                 TSCORE.IO.listSubDirectories(path);
         });
     };
@@ -130,49 +130,42 @@ define(function(require, exports, module) {
     var showOptionsDialog = function() {
         require([
               "text!templates/OptionsDialog.html",
-              "tsoptions",
+              "tsoptions"
             ], function(uiTPL, controller) {
                 if($("#dialogOptions").length < 1) {
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $('body').append(uiTemplate());
                     controller.initUI();
                 }
+                $("#dialogOptions").i18n();
                 controller.reInitUI();
         });
     };
 
     var showWelcomeDialog = function() {
         require([
-              "text!templates/WelcomeDialog.html",
+              "text!templates/WelcomeDialog.html"
             ], function(uiTPL) {
                 if($("#dialogWelcome").length < 1) {
                     var uiTemplate = Handlebars.compile( uiTPL );
                     $('body').append(uiTemplate());
                     $('#welcomeCarosel').carousel();
                 }
+                $("#dialogWelcome").i18n();
                 $("#dialogWelcome").modal({backdrop: 'static',show: true});
         });
     };
 
     var initUI = function() {
-        $("#appVersion").text(
-            TSCORE.Config.DefaultSettings["appVersion"]
-            + "." + TSCORE.Config.DefaultSettings["appBuild"]);
-
-        $("#appVersion").attr("title",
-                              "BuildID: " + TSCORE.Config.DefaultSettings["appVersion"]
-                              + "." + TSCORE.Config.DefaultSettings["appBuild"]
-                              + "." + TSCORE.Config.DefaultSettings["appBuildID"]);
+        $("#appVersion").text(TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]);
+        $("#appVersion").attr("title","BuildID: "+TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"]+"."+TSCORE.Config.DefaultSettings["appBuildID"]);
 
         // prevent default behavior from changing page on dropped file
-        window.ondragover = function(e) { e.preventDefault(); return false };
-        window.ondrop = function(e) { e.preventDefault(); return false };
+        window.ondragover = function(e) { e.preventDefault(); return false; };
+        window.ondrop = function(e) { e.preventDefault(); return false; };
 
         platformTuning();
 
-        /**
-         * Registering event handlers
-         */
         $( "#toggleLeftPanel" ).click(function() {
             TSCORE.toggleLeftPanel();
         });
@@ -181,15 +174,13 @@ define(function(require, exports, module) {
             TSCORE.toggleLeftPanel();
         });
 
-        /**
-         * The buttons on the file creation dialog
-         */
         $( "#txtFileTypeButton" ).click(function(e) {
             // Fixes reloading of the application by click
             e.preventDefault();
 
             fileContent = TSCORE.Config.getNewTextFileContent();
             fileType = "txt";
+
         });
 
         $( "#htmlFileTypeButton" ).click(function(e) {
@@ -341,36 +332,42 @@ define(function(require, exports, module) {
         });
         // End File Menu
 
-        $('#switchLang').click(function(e) {
-            $.i18n.setLng('de', function(t) {
+        $('#switchLang').click(function() {
+            $.i18n.setLng('de', function() {
                 $('[data-i18n]').i18n();
             });
         });
 
-        $('#showLocations').click(function(e) {
+        $('#showLocations').click(function() {
             showLocationsPanel();
             console.log("Show Directories");
         });
 
-        $('#showTagGroups').click(function(e) {
+        $('#showTagGroups').click(function() {
             showTagsPanel();
             console.log("Show Tags");
         });
 
+        $('#contactUs').click(function () {
+            showContactUsPanel();
+            console.log("Show Contact Us");
+        });
+
         // Hide the tagGroupsContent or locationContent by default
         $('#locationContent').hide(); // #tagGroupsContent
+        $('#contactUsContent').hide();
 
         // Search UI
 
         $("#closeSearchOptionButton")
-            .click(function(e) {
+            .click(function() {
                 $("#searchOptions").hide();
             });
 
         $("#includeSubfoldersOption")
-            .click(function(e) {
+            .click(function() {
                 var searchQuery = $("#searchBox").val();
-                if(searchQuery.indexOf("?")==0) {
+                if(searchQuery.indexOf("?")===0) {
                     $("#searchBox").val(searchQuery.substring(1,searchQuery.length));
                 } else {
                     $("#searchBox").val("?"+searchQuery);
@@ -379,21 +376,21 @@ define(function(require, exports, module) {
 
         $("#searchBox")
             .prop('disabled', true)
-            .focus(function(e) {
+            .focus(function() {
                 //$(this).removeClass("input-medium");
                 //$(this).addClass("input-large");
                 $("#searchOptions").show();
             })
             .keyup(function(e) {
                 // On enter fire the search
-                if (e.keyCode == 13) {
+                if (e.keyCode === 13) {
                     $( "#clearFilterButton").addClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                     $("#searchOptions").hide();
                 }  else {
                     TSCORE.Search.nextQuery = this.value;
                 }
-                if (this.value.length == 0) {
+                if (this.value.length === 0) {
                     $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                 }
@@ -401,7 +398,7 @@ define(function(require, exports, module) {
             .blur(function() {
                 //$(this).addClass("input-medium");
                 //$(this).removeClass("input-large");
-                if (this.value.length == 0) {
+                if (this.value.length === 0) {
                     $( "#clearFilterButton").removeClass("filterOn");
                     TSCORE.PerspectiveManager.redrawCurrentPerspective();
                 }
@@ -436,43 +433,82 @@ define(function(require, exports, module) {
 
         $('#perspectiveSwitcherButton').prop('disabled', true);
 
-        $('#contactUs').popover({
-                placement: 'top',
-                content: $("#contactUsContent").html(),
-                html: true
+        var $contactUsContent = $("#contactUsContent");
+
+        $contactUsContent.on('click',"#openHints", function () {
+            showWelcomeDialog();
         });
 
-        $("#sideBarButtunGroup").on('click',"#openHints", function () {
-                showWelcomeDialog();
-            });
+        $contactUsContent.on('click',"#openUservoice", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
 
-        // Handle external links _system is important in cordova
-        $("#sideBarButtunGroup").on('click',"#openUservoice", function () {
-                window.open($(this).attr("url"),"_system");
-            });
+        $contactUsContent.on('click',"#openGooglePlay", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
 
-        $("#sideBarButtunGroup").on('click',"#openGitHubIssues", function () {
-                window.open($(this).attr("url"),"_system");
-            });
+        $contactUsContent.on('click',"#openWhatsnew", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
 
-        $("#sideBarButtunGroup").on('click',"#openTwitter", function () {
-                window.open($(this).attr("url"),"_system");
-            });
+        $contactUsContent.on('click',"#openGitHubIssues", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
 
-        $("#sideBarButtunGroup").on('click',"#openTwitter2", function () {
-                window.open($(this).attr("url"),"_system");
-            });
+        $contactUsContent.on('click',"#helpUsTranslate", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
 
-        $("#sideBarButtunGroup").on('click',"#openGooglePlus", function () {
-                window.open($(this).attr("url"),"_system");
-            });
+        $contactUsContent.on('click',"#openTwitter", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $contactUsContent.on('click',"#openTwitter2", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $contactUsContent.on('click',"#openGooglePlus", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $contactUsContent.on('click',"#openFacebook", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $contactUsContent.on('click',"#openSupportUs", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
+
+        $("#newVersionMenu").on('click',".whatsNewLink", function (e) {
+            e.preventDefault();
+            openLinkExternally($(this).attr("href"));
+        });
 
         // Hide drop downs by click and drag
         $(document).click(function () {
             TSCORE.hideAllDropDownMenus();
         });
-
     };
+
+    // Handle external links
+    function openLinkExternally(url) {
+        if(isNode) {
+            gui.Shell.openExternal(url);
+        } else {
+            // _system is needed for cordova
+            window.open(url,"_system");
+        }
+    }
 
     function clearSearchFilter() {
         $("#searchOptions").hide();
@@ -518,11 +554,11 @@ define(function(require, exports, module) {
             $("#openDirectory").parent().hide();
             $("#advancedSettings").hide();
             $("#openFileInNewWindow").hide();
+            $("#openGooglePlay").hide();
         } else if(isChrome) {
             $("#directoryMenuOpenDirectory").parent().hide();
             $("#fileMenuOpenDirectory").parent().hide();
             $("#openDirectory").parent().hide();
-            //$("#openFileInNewWindow").hide();
             $("#openNatively").hide();
         } else if(isFirefox) {
             $("#openNatively").hide();
@@ -533,12 +569,10 @@ define(function(require, exports, module) {
             // handling window maximization
             var nwwin = gui.Window.get();
             nwwin.on('maximize', function() {
-              //console.log('NW Window maximized');
               TSCORE.Config.setIsWindowMaximized(true);
               TSCORE.Config.saveSettings();
             });
             nwwin.on('unmaximize', function() {
-              //console.log('NW Window unmaximize');
               TSCORE.Config.setIsWindowMaximized(false);
               TSCORE.Config.saveSettings();
             });
@@ -550,12 +584,13 @@ define(function(require, exports, module) {
 
         // Disable send to feature on all platforms except android cordova
         if(!isCordova) {
+            $("#sendFile").hide();
             $("#fileMenuSendTo").hide();
         }
         if(isOSX) {
             $("body").addClass("osx");
         }
-    };
+    }
 
     var showContextMenu = function(menuId, sourceObject) {
         var leftPos = sourceObject.offset().left;
@@ -582,31 +617,45 @@ define(function(require, exports, module) {
         $('#directoryMenu').hide();
         $('#tagMenu').hide();
         $('#fileMenu').hide();
-        //$('.popover').hide();
+        $(".dirAltNavMenu").hide();
     };
 
     var showLocationsPanel = function() {
+        $('#contactUsContent').hide();
         $('#tagGroupsContent').hide();
         $('#locationContent').show();
-        $('#showLocations').addClass("active");
         $('#showTagGroups').removeClass("active");
+        $('#contactUs').removeClass("active");
+        $('#showLocations').addClass("active");
     };
 
     var showTagsPanel = function() {
+        $('#contactUsContent').hide();
         $('#locationContent').hide();
         $('#tagGroupsContent').show();
         $('#showLocations').removeClass("active");
+        $('#contactUs').removeClass("active");
         $('#showTagGroups').addClass("active");
     };
 
+    var showContactUsPanel = function() {
+        $('#locationContent').hide();
+        $('#tagGroupsContent').hide();
+        $('#contactUsContent').show();
+        $('#showLocations').removeClass("active");
+        $('#showTagGroups').removeClass("active");
+        $('#contactUs').addClass("active");
+    };
+
     // Public API definition
-    exports.showContextMenu                = showContextMenu;
-    exports.initUI                         = initUI;
+    exports.showContextMenu             = showContextMenu;
+    exports.initUI                      = initUI;
     exports.clearSearchFilter           = clearSearchFilter;
+    exports.openLinkExternally          = openLinkExternally;
     exports.enableTopToolbar            = enableTopToolbar;
     exports.disableTopToolbar           = disableTopToolbar;
     exports.showAlertDialog             = showAlertDialog;
-    exports.showConfirmDialog             = showConfirmDialog;
+    exports.showConfirmDialog           = showConfirmDialog;
     exports.showFileRenameDialog        = showFileRenameDialog;
     exports.showFileCreateDialog        = showFileCreateDialog;
     exports.showFileDeleteDialog        = showFileDeleteDialog;
@@ -616,4 +665,5 @@ define(function(require, exports, module) {
     exports.showTagsPanel               = showTagsPanel;
     exports.showDirectoryBrowserDialog  = showDirectoryBrowserDialog;
     exports.hideAllDropDownMenus        = hideAllDropDownMenus;
+
 });

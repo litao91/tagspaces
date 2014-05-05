@@ -1,11 +1,11 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that
+ * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 
 define(function(require, exports, module) {
 "use strict";
 
-    console.log("Loading viewerMD");
+	console.log("Loading viewerMD");
 
     exports.id = "viewerMD"; // ID should be equal to the directory name where the ext. is located
     exports.title = "MD Viewer";

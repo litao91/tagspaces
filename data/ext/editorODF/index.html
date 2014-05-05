@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html dir="ltr">
   <head>
@@ -14,12 +13,20 @@
         }
         
         function init() {
-          var odfelement = document.getElementById("odf"),
-              odfcanvas = new odf.OdfCanvas(odfelement);
-          odfcanvas.load(getParameterByName("cp"));
+            var webodffirefox = {
+                url: undefined,
+                data: undefined,
+                odfcanvas: undefined
+            };
+
+            runtime.loadClass("odf.OdfCanvas");
+            var wf = webodffirefox,
+                    odfelement = document.getElementById("odf");
+            wf.url = getParameterByName("cp");
+            wf.odfcanvas = new odf.OdfCanvas(odfelement);
+            wf.odfcanvas.load(wf.url);
         }
         window.setTimeout(init, 0);
-
     </script>
   </head>
   <body>

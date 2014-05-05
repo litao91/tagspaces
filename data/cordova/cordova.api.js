@@ -1,13 +1,18 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/* global define */
+
 define(function (require, exports, module) {
     "use strict";
 
     console.log("Loading ioapi.cordova.js..");
-
+    
     var TSCORE = require("tscore");    
-    var TSPOSTIO = require("tspostioapi");   
+    var TSPOSTIO = require("tspostioapi"); 
+    
+    var attachFastClick = require('cordova/fastclick.min');
+    attachFastClick(document.body);        
 
     var fsRoot = undefined;
 
@@ -16,6 +21,14 @@ define(function (require, exports, module) {
     // Cordova loaded and can be used
     function onDeviceReady() {
         console.log("Devive Ready: "+device.platform+" - "+device.version);
+
+        // Redifining the back button
+        document.addEventListener("backbutton", function(e){
+            TSCORE.FileOpener.closeFile();
+            $('.modal').modal('hide');
+            e.preventDefault();
+        }, false);        
+        
         getFileSystem();
     }
 
@@ -35,24 +48,24 @@ define(function (require, exports, module) {
     function scanDirectory(entries) {
         var i;
         for (i = 0; i < entries.length; i++) {
-           if (entries[i].isFile) {
-               console.log("File: "+entries[i].name);
-               anotatedDirListing.push({
-                   "name":   entries[i].name,
-                   "isFile": entries[i].isFile,
-                   "size":   "", // TODO
-                   "lmdt":   "", // 
-                   "path":   entries[i].fullPath
-               });                
-           } else {
-               var directoryReader = entries[i].createReader();
-               pendingRecursions++;
-               directoryReader.readEntries(
-                   scanDirectory,
-                   function (error) {
+            if (entries[i].isFile) {
+                console.log("File: " + entries[i].name);
+                anotatedDirListing.push({
+                    "name": entries[i].name,
+                    "isFile": entries[i].isFile,
+                    "size": "", // TODO
+                    "lmdt": "", //
+                    "path": entries[i].fullPath
+                });
+            } else {
+                var directoryReader = entries[i].createReader();
+                pendingRecursions++;
+                directoryReader.readEntries(
+                    scanDirectory,
+                    function (error) {
                         console.log("Error reading dir entries: " + error.code);
-                   } );
-           }
+                    });
+            }
         }
         pendingRecursions--;            
         console.log("Pending recursions: " + pendingRecursions);   
@@ -61,7 +74,7 @@ define(function (require, exports, module) {
         }     
     }
     
-    var anotatedDirListing = undefined;
+    var anotatedDirListing;
     var pendingRecursions = 0;
     var createDirectoryIndex = function(dirPath) {
         dirPath = dirPath+"/"; // TODO make it platform independent
@@ -97,7 +110,7 @@ define(function (require, exports, module) {
                tree["children"].push({
                    "name":   entries[i].name,
                    "isFile": entries[i].isFile,
-                   "size":   "", // TODO
+                   "size":   "", // TODO size and lmtd
                    "lmdt":   "", // 
                    "path":   entries[i].fullPath
                });                
@@ -135,10 +148,10 @@ define(function (require, exports, module) {
     
     var checkNewVersion = function() {
         console.log("Checking for new version...");
-        var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
+        var cVer = TSCORE.Config.DefaultSettings.appVersion+"."+TSCORE.Config.DefaultSettings.appBuild;
         $.ajax({
             url: 'http://tagspaces.org/releases/version.json?pVer='+cVer,
-            type: 'GET',
+            type: 'GET'
         })
         .done(function(data) { 
             TSPOSTIO.checkNewVersion(data);    
@@ -221,7 +234,7 @@ define(function (require, exports, module) {
                                         });
                                         pendingCallbacks--;                                                                                                
                                         console.log("File: "+entry.name+" Size: "+entry.size+ " i:"+i+" Callb: "+pendingCallbacks);
-                                        if(pendingCallbacks == 0 && i == entries.length) {
+                                        if(pendingCallbacks === 0 && i === entries.length) {
                                             TSPOSTIO.listDirectory(anotatedDirList);
                                         }                          
                                     }, function (error) { // error get file system
@@ -238,13 +251,13 @@ define(function (require, exports, module) {
                                     "path":   normalizedPath
                                 });
                                 console.log("Dir: "+entries[i].name+ " I:"+i+" Callb: "+pendingCallbacks);                                
-                                if((pendingCallbacks == 0) && ((i+1) == entries.length)) {
+                                if((pendingCallbacks === 0) && ((i+1) == entries.length)) {
                                     TSPOSTIO.listDirectory(anotatedDirList);
                                 }                                                                            
                             } 
                                                    
                         }
-                        if(pendingCallbacks == 0) {
+                        if(pendingCallbacks === 0) {
                             TSPOSTIO.listDirectory(anotatedDirList);
                         }   
                         //console.log("Dir content: " + JSON.stringify(entries));
@@ -286,7 +299,7 @@ define(function (require, exports, module) {
         );
     };
 
-    var loadTextFile = function(filePath) {
+    var loadTextFile = function(filePath, isPreview) {
         console.log("Loading file: "+filePath);
         TSCORE.showLoadingAnimation();  
 
@@ -299,7 +312,11 @@ define(function (require, exports, module) {
                         reader.onloadend = function(evt) {
                             TSPOSTIO.loadTextFile(evt.target.result); 
                         };
-                        reader.readAsText(file);
+                        if(isPreview) {
+                          reader.readAsText(file.slice(0,10000));
+                        } else {
+                            reader.readAsText(file);
+                        }
                     },
                     function() {
                         console.log("error getting file: "+filePath);
@@ -319,8 +336,8 @@ define(function (require, exports, module) {
         // Handling the UTF8 support for text files
         var UTF8_BOM = "\ufeff";
 
-        if(content.indexOf(UTF8_BOM) == 0) {
-            // already has a UTF8 bom
+        if(content.indexOf(UTF8_BOM) === 0) {
+            console.log("Content beging with a UTF8 bom");
         } else {
             content = UTF8_BOM+content;
         }    
@@ -403,7 +420,7 @@ define(function (require, exports, module) {
     };
 
     var selectFile = function() {
-        console.log("Operation selectFile not supported on Android!");
+        console.log("Operation selectFile not supported.");
     };
     
     var checkAccessFileURLAllowed = function() {
@@ -411,7 +428,7 @@ define(function (require, exports, module) {
     };
     
     var openDirectory = function(dirPath) {
-        TSCORE.showAlertDialog("Select file functionality not supported on Android!");
+        TSCORE.showAlertDialog($.i18n.t("ns.dialogs:openContainingDirectoryAlert"));
         //dirPath = normalizePath(dirPath);
         //window.open(dirPath,"_blank", "location=no");        
     };
@@ -446,11 +463,11 @@ define(function (require, exports, module) {
                             TSPOSTIO.getFileProperties(fileProperties);
                         },
                         function() {
-                            console.warn("Error retrieving file properties of "+filePath);                               
+                            console.log("Error retrieving file properties of "+filePath);
                         }
                     );
                 } else {
-                    console.warn("Error getting file properties. "+filePath+" is directory");   
+                    console.log("Error getting file properties. "+filePath+" is directory");
                 }
             },
             function() {
@@ -460,21 +477,21 @@ define(function (require, exports, module) {
     };
     
     exports.createDirectory             = createDirectory; 
-    exports.renameFile                     = renameFile;
-    exports.loadTextFile                 = loadTextFile;
-    exports.saveTextFile                 = saveTextFile;
-    exports.listDirectory                 = listDirectory;
+    exports.renameFile                  = renameFile;
+    exports.loadTextFile                = loadTextFile;
+    exports.saveTextFile                = saveTextFile;
+    exports.listDirectory               = listDirectory;
     exports.listSubDirectories          = listSubDirectories;
-    exports.deleteElement                 = deleteElement;
-    exports.createDirectoryIndex         = createDirectoryIndex;
+    exports.deleteElement               = deleteElement;
+    exports.createDirectoryIndex        = createDirectoryIndex;
     exports.createDirectoryTree         = createDirectoryTree;
     exports.selectDirectory             = selectDirectory;
-    exports.openDirectory                = openDirectory;
+    exports.openDirectory               = openDirectory;
     exports.openFile                    = openFile;
     exports.sendFile                    = sendFile;
-    exports.selectFile                     = selectFile;
+    exports.selectFile                  = selectFile;
     exports.openExtensionsDirectory     = openExtensionsDirectory;
-    exports.checkAccessFileURLAllowed     = checkAccessFileURLAllowed;
+    exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;        
     exports.getFileProperties           = getFileProperties;
     

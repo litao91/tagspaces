@@ -1,12 +1,80 @@
 ﻿#Changelog
 
+##Version 1.8.0 / 2014.05.02
+- adding configurable keybinding
+- german and italian translations added
+- improvements in the options dialog
+- fixing [#59](https://github.com/uggrock/tagspaces/issues/59) about saving utf8 content
+- fixing opening links in the default browser instead of the application [#53](https://github.com/uggrock/tagspaces/issues/53) in markdown files
+- fixing undo issue [#45](https://github.com/uggrock/tagspaces/issues/45)
+- reenabling the menu on mac [#44](https://github.com/uggrock/tagspaces/issues/44)
+- [uservoice] adding setting for showing confirmation dialog before recursive scan
+- [firefox] optimizing the start TagSpaces button in the toolbar for support in Firefox 29
+- [android] new icon
+- optimizing icon layout
+- adding back favicon
+- optimizing loading js libs
+- adding basic handler for command line arguments
+- removing the widger from the addon bar
+- optimizing the dropups in the alternative directory navigator
+- optimizing the tags dropdown menu
+- disabling opening of last location of firefox
+- updating the webodf lib
+- fixing thumbnail refresh
+- adding handling for switching languages
+- moving switching language to general tab
+- adding handling for key bindings
+- adding button for help translating
+- adding tab for keybindings
+- adding new method for language switching
+- adding new keybinding settings
+- fixing issues with embeding local images and images in data urls
+- exchanging ok and cancel in buttons with icons
+- added function for opening links in the default browser of the user
+- exchanging dialog close icons with a bigger one
+- exchanging x in dialogs with a bigger icon
+- exchanging the send to icon
+- changing the default viewer for text files to editorText
+- adding a document listing all the used libraries
+- reducing the widht of the tiles in grid perspective
+- changing the backgroud color of the buttons in the image viewer
+- making the status bar not wrappable
+- jshiniting
+
+##Version 1.7.9 / 2014.04.02
+- removing of many tags on many files now possible in one step
+- making the toolbar icons flat
+- adding swipe gestures for image navigation
+- fixing text wrapping issues in list perspective
+- adding key bindinds for left and right
+- redesigning the alternative path navigation
+- adding "close file" and "send to" actions to the file menu
+- preventing opening links in html files
+- adding confirmation dialog for recursiv scan
+- correcting fastclick integration
+- improving edit title buttons
+- opening location panel on location opening
+- redifining backbutton cordova
+- disable closing of taging dialog by clicking outside of the dialog
+- adding iphone icons for the webapp
+- adding handler for opening of what's new page
+- improving tag handling in dialogs by activating tag selection on blur
+- reactivating showing the popup hint if no location created
+- resigning contact us panel
+- disabling opening the location panel if subfolders exists
+- adding a new iframe viewer extension
+- updating require.js library to a newer version
+- removing the trailing red dot from the editor's content
+- [osx] disabling the file menu on mac
+- [api] extending loadTextFile funcion to support file preview
+
 ##Version 1.7.8 / 2014.03.21
 - enabling opening of the last opened location by the start of the application [#29](https://github.com/uggrock/tagspaces/issues/29)
 - adding the following key bindings
-    - ctrl+r / command+r - reload the current document
+    - ctrl+r / command+r - reloads the current document
     - ctrl+s / command+s - saves the current document if opened for editing
-    - esc - close the current document  
-    - alt-enter - show the document properties
+    - esc - closes the current document  
+    - alt-enter - shows the document properties
 - making all dialogs not disappear by clicking outsite of the dialog
 - fixing issue with not displaying local images in markdown files
 - adding webp as supported image format (not in firefox)
@@ -25,11 +93,10 @@
 - adding handler for the new add tag menu item
 - moving toolbar in the image viewer to bottom right
 - removing hover and focus background toggle left panel button
-- adding support for viewing of ODF files (e.g. ODT, ODS, ODG, ODP)
+- adding support for viewing of ODF files (e.g. ODT, ODS, ODG, ODP) not available in firefox and chrome
 - adding new version of pdf.js with support of printing, rotating, dragging, document properties and goto first/last page
 
 ##Version 1.7.6 / 2014.02.28
-
 - remember and open the last state of the application window e.g. maximize or not [#29](https://github.com/uggrock/tagspaces/issues/29)
 - adding openLocation to the TSCORE API
 - making the directory to taglibrary switch buttons brighter

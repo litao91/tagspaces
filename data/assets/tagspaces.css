@@ -1,6 +1,6 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors.
- * All rights reserved. Use of this source code
- * is governed by a AGPL3 license that can be
+/* Copyright (c) 2012-2013 The TagSpaces Authors. 
+ * All rights reserved. Use of this source code 
+ * is governed by a AGPL3 license that can be  
  * found in the LICENSE file. */
 @font-face {
   font-family: 'Ubuntu';
@@ -18,38 +18,38 @@ html, body {
     margin: 0;
     overflow: hidden;
     font-size: 9px;
-    font-family: Helvetica, Ubuntu, Geneva, Arial, sans-serif;
+    font-family: Ubuntu, Geneva, Arial, Helvetica, sans-serif; 
 }
 
 body.osx {
-    /*font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
-     *
-     */
+    /*font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif; 
+     * 
+     *//
 }
 
 /* Removes the selection border on ui elements on android */
-* {
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
+* { 
+    -webkit-tap-highlight-color: rgba(0,0,0,0); 
     -webkit-touch-callout: none;
 /*
 -webkit-user-select: none;
 -khtml-user-select: none;
 -moz-user-select: none;
-user-select: none;
+user-select: none; 
 * */
 }
 
 /* {
-    -webkit-user-select: none;
-    user-select: none;
-    -moz-user-select: -moz-none;
+    -webkit-user-select: none; 
+    user-select: none; 
+    -moz-user-select: -moz-none;    
 } */
 
 .disableTextSelection {
-    -webkit-user-select: none;
-    user-select: none;
-    -moz-user-select: -moz-none;
-}
+    -webkit-user-select: none; 
+    user-select: none; 
+    -moz-user-select: -moz-none;    
+} 
 
 /* Custom scrollbars for chrome */
 ::-webkit-scrollbar-track
@@ -74,27 +74,27 @@ user-select: none;
 
 
 #logo {
-    padding: 0px;
+    padding: 0;
     font-size: 1.5em;
     margin: 3px;
     color: #616577;
     font-weight: bold;
     padding-left: 32px;
-    padding-top: 4px;
+    padding-top: 4px;    
     background: url("icon.svg") no-repeat left center;
     background-size: 28px 28px;
-    background-position: 0px 0px;
+    background-position: 0 0;
     height: 31px;
     display: inline-block;
 }
 
 .appVersion {
-  font-size: 1.3em;
-  color: #616577;
+  font-size: 1.3em; 
+  color: #616577;  
 }
 
 #currentLocation {
-  padding: 0px;
+  padding: 0;
   font-size: 1.3em;
   color: lightgray;
   display: inline-block;
@@ -123,7 +123,7 @@ user-select: none;
 #directoryList { list-style-type: none; margin: 0; padding: 0; width: 100%; }
 #directoryList li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 18px; }
 
-/* Thumbs box design
+/* Thumbs box design    
  * TODO Move to viewThumb extension css
  * */
 .selectableFiles .ui-selecting { background: #fff5a3; color: black; }
@@ -131,14 +131,13 @@ user-select: none;
 .selectableFiles { list-style-type: none; margin: 0; padding: 0; }
 
 .fileTile {
-    margin: 3px;
-    padding: 1px;
-    padding-left: 3px;
+    margin: 3px; 
+    padding: 1px 1px 1px 3px;
     float: left;
     border: 1px solid #D4D4D4;
     text-align: left;
     width: 180px;
-    height: 100px;
+    height: 100px;  
     overflow: hidden;
     position:relative;
     background-color: white;
@@ -149,11 +148,11 @@ user-select: none;
 }
 
 .thumbImgTile {
-    max-width: 100px;
+    max-width: 100px; 
     max-height: 100px;
     position:absolute;
     bottom:0;
-    right:0;
+    right:0;   
     border: 0px lightgray solid;
     z-index: 1;
 }
@@ -199,16 +198,16 @@ table .fileTitle {
 
 .tagsInFileTile {
     position: absolute;
-    z-index: 100;
+    z-index: 100;    
     left: 5px;
-    top: 35px;
+    top: 35px;    
 }
 
 .fileTileSelector {
     position:absolute;
     bottom:0;
     left:0;
-    z-index: 101;
+    z-index: 101;      
 }
 
 .fileExtTile {
@@ -217,12 +216,12 @@ table .fileTitle {
     right:0;
     -webkit-border-radius: 0px !important;
     border-radius: 0px !important;
-    background: #999 ;
+    background: #999 ; 
     text-align: center;
     padding: 1px;
-    color: white ;
-    z-index: 99;
-    text-transform:uppercase;
+    color: white ;  
+    z-index: 99;  
+    text-transform:uppercase;           
 }
 
 .fileTagsTile {
@@ -238,7 +237,7 @@ table .fileTitle {
 }
 
 .thumbImg {
-    max-width: 100px;
+    max-width: 100px; 
     max-height: 100px;
     vertical-align: text-top;
     border: 1px lightgray solid;
@@ -250,7 +249,7 @@ table .fileTitle {
 }
 
 #viewsRadio input {
-    display: inline-block;
+    display: inline-block;    
 }
 
 #fileSortRadio {
@@ -266,8 +265,8 @@ table .fileTitle {
 }
 
 li hr {
-    height: 0px;
-    border: 0px;
+    height: 0;
+    border: 0;
 }
 
 .tagButton .caret, .extTagButton .caret {
@@ -276,18 +275,18 @@ li hr {
 
 .tagButton {
     padding: 2px 4px 2px 4px !important;
-    background: #008000 !important;
+    background: #008000 !important;    
     color: white !important;
     margin: 1px;
     border: 0px;
-    z-index: 9999;
+    z-index: 9999;    
     border-radius: 5px !important;
-    text-decoration: none  !important;
+    text-decoration: none  !important; 
 }
 
 .extTagButton {
     padding: 2px 4px 2px 4px;
-    background: #bbb !important;
+    background: #bbb !important;        
     color: white !important;
     margin: 1px;
     border: 0px;
@@ -298,8 +297,6 @@ li hr {
 .fileButton {
     padding: 1px;
     background-color: #E5E5E5;
-    padding-left: 1px;
-    padding-right: 12px;
     font-weight: normal;
     color: #222222;
     text-align: left;
@@ -320,42 +317,42 @@ li hr {
 
 /* Layout */
 .ui-layout-pane { /* all 'panes' */
-    border:    0px;
+    border:    0;
 }
-
+    
 .ui-layout-north {
     padding: 0px;
     height: 40px;
     background-color: #333333;
     overflow: hidden !important;
-}
+}    
 
 .ui-layout-resizer {
     background-color: white;
     border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid #ddd;    
 }
 
 .ui-layout-toggler {
-    background-color: white;
-    border-width: 0px;
+    background-color: white;  
+    border-width: 0;
 }
 
 #directoryNavigatorNorth, #locationContent, #tagGroupsContent, .middle-north, .east-north {
-    background-color:  transparent;
-}
+    background-color:  transparent; 
+}    
 
 #directoryNavigatorNorth {
-    overflow: hidden !important;
+    overflow: hidden !important;    
 }
 
 #toggleLeftPanel {
-    border: 0px;
-    display: block;
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 10px;
-    margin: 0px;
+    border: 0;
+    display: block; 
+    padding-left: 5px; 
+    padding-right: 5px; 
+    padding-top: 10px; 
+    margin: 0;
 }
 
 #toggleLeftPanel .icon-bar {
@@ -373,7 +370,7 @@ li hr {
 #tagsContainer {
     width: 100%;
     min-height: 40px;
-    margin: 0px;
+    margin: 0;
 }
 
 #viewToolbars {
@@ -381,8 +378,8 @@ li hr {
 }
 
 #viewContainers {
-    background-color: white;
-    padding: 0;
+    background-color: white; 
+    padding: 0;    
 }
 
 #viewFooters {
@@ -390,16 +387,16 @@ li hr {
 }
 
 .searchSummary {
-    padding-top: 2px;
-    padding-left: 2px;
-    font-size: 1.0em;
-    border-width: 0px
+    padding-top: 2px; 
+    padding-left: 2px; 
+    font-size: 1.0em; 
+    border-width: 0
 }
 
 .middle-north {
     background-color: #FFFFFF;
     overflow: hidden !important;
-}
+}    
 
 .middle-south {
     overflow: hidden !important;
@@ -407,8 +404,8 @@ li hr {
 
 .east-north {
     background-color: #FFFFFF;
-    overflow: hidden !important;
-}
+    overflow: hidden !important;    
+}    
 
 /* Full screen workaround for webkit browser*/
 :-webkit-full-screen #viewer {
@@ -426,7 +423,7 @@ li hr {
     font-size: 13px;
     background-color: #E5E5E5;
     color: #444444;
-    background-image: none;
+    background-image: none;    
 /*    border-color: transparent; */
 }
 
@@ -435,7 +432,7 @@ li hr {
 }
 
 .dropOnFolder {
-  background-color: #F6A828 !important;
+  background-color: #F6A828 !important;    
 }
 
 /*desaturate(@directoryColor, 30%) */
@@ -448,52 +445,52 @@ li hr {
 }
 
 #locationContent {
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow-x: hidden;    
+    overflow-y: auto;        
 }
 
 .tagGroupIcon {
-    text-align: left;
-    width: 12%;
-    padding-left: 1px;
+    text-align: left; 
+    width: 12%; 
+    padding-left: 0 !important;
     color: #333 !important;
 }
 
 .tagGroupTitle {
     text-align: left;
-    padding-left: 2px;
-    font-size: 13px !important;
+    padding: 10px 0 0 2px;
+    font-size: 14px !important;
     width:68%;
-    color: #333 !important;
+    color: #333 !important; 
 }
 
 .tagGroupActions {
-    width:20%;
+    width:20%; 
     padding-right: 7px;
     color: #333 !important;
-    text-align: right;
+    text-align: right;         
 }
 
 .directoryIcon {
-    text-align: left;
-    width: 12%;
-    padding-left: 5px;
-    color: #333 !important;
+    text-align: left; 
+    width: 12%; 
+    padding-left: 0 !important;
+    color: #333 !important;    
 }
 
 .directoryTitle {
     text-align: left;
-    padding-left: 2px;
-    font-size: 13px !important;
-    width:68%;
-    color: #333 !important;
+    padding: 10px 0 0 2px;
+    font-size: 14px !important;
+    width:68%;  
+    color: #333 !important;    
 }
 
 .directoryActions {
-    text-align: right;
-    width:20%;
+    text-align: right;     
+    width:20%; 
     padding-right: 7px;
-    color: #333 !important;
+    color: #333 !important;    
 }
 
 
@@ -503,7 +500,7 @@ table.dataTable tr.even {
 
 table.dataTable tr.odd {
     background-color: white;
-}
+} 
 
 .activeRow { background: #FFCC99 !important; }
 
@@ -544,11 +541,11 @@ input a.resetFilter {
 
 /* Hiding the OOTB filter box */
 .dataTables_filter {
-    display: none;
+    display: none; 
 }
 
 #selectedFilePath {
-    color: #363636;
+    color: #363636;   
 }
 
 /* Bootstrap Styles  white !important */
@@ -556,23 +553,23 @@ input a.resetFilter {
 .btn, .btn:hover, .btn:focus, .btn:active {
   background-image: none;
   border-radius: 2px;
-  outline: 0;
+  outline: 0;  
 }
 
 .btn-default:focus {
   background-color: white;
 }
 
-.btn-primary {
+.modal .btn {
   min-width: 70px;
 }
 
 
 .btn-link, .btn-link:hover, .btn-link:focus, .btn-link:active {
   text-decoration: none;
-  color: gray;
+  color: #444444;
   text-shadow: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 /* Extension #33b5be from logo */
@@ -589,8 +586,8 @@ input a.resetFilter {
   text-shadow: none;
 }
 
-.carousel-inner > .item > img {
-    margin: 0 auto;
+.carousel-inner > .item > img { 
+    margin: 0 auto; 
     max-height: 100%;
     max-width: 100%;
 }
@@ -607,7 +604,7 @@ input a.resetFilter {
     color: #444444;
     font-weight: bold;
     font-size: 12px;
-    display: inline-block;
+    display: inline-block;    
 }
 
 .modal-body {
@@ -643,7 +640,7 @@ input a.resetFilter {
 }
 
 .col2 .row3 {
-    border-top: 1px #ddd solid;
+    border-top: 1px #ddd solid;  
 }
 
 .col3 .ts-container {
@@ -652,28 +649,28 @@ input a.resetFilter {
 
 .col3 .navbar {
     padding-left: 5px;
-    border-bottom: 1px #ddd solid;
+    border-bottom: 1px #ddd solid;    
 }
 
-.ui-layout-resizer    {
+.ui-layout-resizer    { 
     background-color: white;
     border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid #ddd;    
 }
 
 .ts-container {
     position: absolute;
     top: 81px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: auto;
-    z-index: 10;
-}
+    z-index: 10;    
+} 
 
 .navbar {
     border-radius: 0 !important;
-    border: 0px;
+    border: 0;
     border-bottom: 1px;
 }
 
@@ -682,8 +679,8 @@ input a.resetFilter {
 }
 
 #fileExt {
-    background-color: #515151;
-    text-transform:uppercase;
+    background-color: #515151; 
+    text-transform:uppercase; 
     font-size: 12px;
     padding: 4px;
     color: white;
@@ -692,12 +689,12 @@ input a.resetFilter {
 .dropdown {
     position: absolute;
     display:none;
-    z-index: 88888;
+    z-index: 88888;    
 }
 
 .white-caret {
-    border-top-color: white;
-    border-bottom-color: white;
+    border-top-color: white; 
+    border-bottom-color: white;    
 }
 
 .simplecolorpicker.fontawesome span.color[data-selected]:after {
@@ -741,27 +738,62 @@ input a.resetFilter {
 
 .optionsTitle {
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: normal;
     color: gray;
+    padding: 5px 10px 5px 10px !important;
+    font-size: 12px;
+}
+
+#newVersionMessageContent {
+    padding: 15px;
 }
 
 #welcomeScreen {
     background: url(welcome-logo.png) no-repeat center;
     background-size: auto auto;
-    width: 100%;
+    width: 100%; 
     height: 100%;
 }
 
-#showTagGroups, #showLocations {
-    width: 50px;
+#showTagGroups, #showLocations, #contactUs {
+   width: 50px;
 }
 
-@media
-(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+
+#contactUsContent .btn-link {
+    height: 45px;
+    color: #404040;
+}
+
+#fileViewerMainToolbar .btn-link {
+    height: 40px;
+    width: 55px;
+}
+
+#alternativeNavigator .btn-link {
+    padding-left: 2px;
+    padding-right: 2px;
+    color: #404040;    
+}
+
+#fileViewerMainToolbar {
+    position: fixed; 
+    right: 0;
+    top: 0;
+    background-color: #F2F2F2; 
+}
+
+.keyShortcut {
+    margin-top: 15px;
+    display: none;
+}
+
+@media 
+(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
     #welcomeScreen {
-        width: 100%;
+        width: 100%; 
         height: 100%;
         background: url(welcome-logo2x.png) no-repeat center;
         background-size: 300px 200px;
     }
-}
+} 

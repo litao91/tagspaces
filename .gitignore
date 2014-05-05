@@ -24,3 +24,4 @@ data/node-webkit/nw.pak
 data/node-webkit/RCEDIT.exe
 data/node-webkit/RCEDIT64.exe
 data/devlibs
+*.orig

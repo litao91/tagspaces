@@ -13,18 +13,16 @@ if (PRODUCTION == "true") {
     console.log = function(){};
 }
 
-/**
- * Environment check
- */
-var isFirefox = document.URL.indexOf( 'resource://' ) == 0;
-var isFirefoxOS = document.URL.indexOf( 'app://' ) == 0;
+var isFirefox = document.URL.indexOf( 'resource://' ) === 0;
+var isFirefoxOS = document.URL.indexOf( 'app://' ) === 0;
 //var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-var isChrome =  document.URL.indexOf( 'chrome-extension://' ) == 0;
-var isNode = undefined;
-var isCordova = document.URL.indexOf( 'file:///android_asset' ) == 0;
-var isWeb = document.URL.indexOf( 'http' ) == 0;
-var isOSX = navigator.appVersion.indexOf("Mac")!=-1;
-var isWin = navigator.appVersion.indexOf("Win")!=-1;
+var isChrome =  document.URL.indexOf( 'chrome-extension://' ) === 0;
+var isNode;
+// TODO ios cordova file:///var/mobile/Applications/.../App.app/www/index.html
+var isCordova = document.URL.indexOf( 'file:///android_asset' ) === 0;
+var isWeb = document.URL.indexOf( 'http' ) === 0;
+var isOSX = navigator.appVersion.indexOf("Mac")!==-1;
+var isWin = navigator.appVersion.indexOf("Win")!==-1;
 
 // Check for running in node-webkit
 try {
@@ -59,9 +57,6 @@ if( isFirefox ) {
 
 console.log("Loading Loader - Firefox: "+isFirefox+" | ChromeExt: "+isChrome+" | Node: "+isNode+" | Cordova: "+isCordova);
 
-/**
- * RequireJS stuff
- */
 requirejs.config({
     map: {
       '*': {
@@ -90,7 +85,7 @@ requirejs.config({
         underscore:             'libs/underscore/underscore',
         d3:                     'libs/d3/d3.v3',
         dropbox:                'libs/dropbox/dropbox.0.10.2',
-        i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.1',
+        i18next:                'libs/i18next/i18next.amd.withJQuery-1.7.2.min',
         mousetrap:              'libs/mousetrap/mousetrap.min',
         select2:                'libs/select2/select2.min',
         hammerjs:               'libs/hammerjs/jquery.hammer.min',
@@ -132,33 +127,35 @@ requirejs.config({
         'jquerydropdown':           { deps: ['jquery','bootstrap'] },
         'bootstrap3xeditable':      { deps: ['jquery','jqueryui','bootstrap'] },
         'jquerynanoscroller':       { deps: ['jquery'] },
+        'i18next':                  { deps: ['jquery'] },
         'select2':                  { deps: ['jquery'] },
         'hammerjs':                 { deps: ['jquery'] },
         'tscore':                   { deps: [
-                'jquery',
-                'jqueryui',
-                'jqueryuidraggable',
-                'jqueryuidroppable',
-                'jqueryuiresizable',
-                'jqueryuiposition',
-                'jqueryuiselectable',
-                'jqueryuisortable',
-                'hammerjs',
-                'bootstrap',
-                'bootstrap3xeditable',
-                'jquerysimplecolorpicker',
-                'jquerylayout',
-                'i18next',
-                'mousetrap',
-                'select2',
-                'handlebarsjs',
-                'tssettingsdefault',
-            ] },
+                                            'jquery',
+                                            'jqueryui',
+                                            'jqueryuidraggable',
+                                            'jqueryuidroppable',
+                                            'jqueryuiresizable',
+                                            'jqueryuiposition',
+                                            'jqueryuiselectable',
+                                            'jqueryuisortable',
+                                            'hammerjs',
+                                            'bootstrap',
+                                            'bootstrap3xeditable',
+                                            'jquerysimplecolorpicker',
+                                            'jquerylayout',
+                                            'i18next',
+                                            'mousetrap',
+                                            'select2',
+                                            'handlebarsjs',
+                                            'tssettingsdefault'
+                                        ] }
     }
 });
 
 define(function (require, exports, module) {
 "use strict";
+
 
     if (isCordova) {
         require(["cordova.js"]);
@@ -166,8 +163,8 @@ define(function (require, exports, module) {
         attachFastClick(document.body);
     }
 
-    var TSCORE = undefined;
-    require(['tscore','underscore'], function (core,_) {
+    var TSCORE;
+    requirejs(['tscore','underscore'], function (core) {
         TSCORE = core;
         TSCORE.initApp();
     });

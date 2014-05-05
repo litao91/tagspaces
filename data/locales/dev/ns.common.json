@@ -1,8 +1,0 @@
-{
-    "app": {
-      "name": "TagSpaces EN",
-      "switchToLocationsTooltip": "Show Folder Navigator",
-      "toggleLeftPanelTooltip": "Toggle Left Panel",
-      "switchLanguageTooltip": "Switch language"      
-    }
-}

@@ -1,6 +1,8 @@
-/* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
+/* Copyright (c) 2012-2014 The TagSpaces Authors. All rights reserved.
  * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
+/* jshint moz: true, strict: false */
+/* global exports */
 
 const prefs = require('sdk/preferences/service'); // preferences-service
   
@@ -40,7 +42,7 @@ exports.loadSettings = function loadSettings(worker) {
 exports.saveSettings = function saveSettings(content, worker) {
     console.log("Saving setting...");
     try {   
-        save("settings", content)
+        save("settings", content);
         worker.postMessage({
                 "command": "saveSettings",
                 "success": true

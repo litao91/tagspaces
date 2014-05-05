@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2013 The TagSpaces Authors. All rights reserved.
- * Use of this source code is governed by a AGPL3 license that
+ * Use of this source code is governed by a AGPL3 license that 
  * can be found in the LICENSE file. */
 define(function (require, exports, module) {
     "use strict";
@@ -12,12 +12,13 @@ define(function (require, exports, module) {
 - directory
 {"_json":{"revision":354,"rev":"1620068aeb1","thumb_exists":false,"bytes":0,"modified":"Tue, 19 Nov 2013 16:32:05 +0000","path":"/23","is_dir":true,"icon":"folder","root":"dropbox","size":"0 bytes"},"path":"/23","name":"23","isFolder":true,"isFile":false,"isRemoved":false,"typeIcon":"folder","modifiedAt":"2013-11-19T16:32:05.000Z","clientModifiedAt":null,"inAppFolder":false,"size":0,"humanSize":"0 bytes","hasThumbnail":false,"versionTag":"1620068aeb1","contentHash":null,"mimeType":"inode/directory"}
 */
+
     var fsRoot;
-
+    
     var TSCORE = require("tscore");
-    var TSPOSTIO = require("tspostioapi");
+    var TSPOSTIO = require("tspostioapi");   
     require('dropbox');
-
+    
     var init = function() {
         if (!fsRoot) {
             if(window.location.hash.length < 1) {
@@ -40,23 +41,23 @@ define(function (require, exports, module) {
                 fsRoot = new Dropbox.Client({
                     key: "t174lonmydtl9mk",
                     sandbox: false,
-                    token: dboxToken,
+                    token: dboxToken
                 });
             }
         }
     };
 
 
-    // TODO recursivly calling callback not working
+    // TODO recursivly calling callback not working        
     function scanDirectory(dirPath, index) {
 
     }
-
+    
     // TODO recursivly calling callback not working
     function generateDirectoryTree(dirPath) {
 
-    }
-
+    }   
+    
     var checkNewVersion = function() {
         console.log("Checking for new version...");
         var cVer = TSCORE.Config.DefaultSettings["appVersion"]+"."+TSCORE.Config.DefaultSettings["appBuild"];
@@ -64,27 +65,26 @@ define(function (require, exports, module) {
             url: 'http://tagspaces.org/releases/version.json?pVer='+cVer,
             type: 'GET',
         })
-        .done(function(data) {
-            TSPOSTIO.checkNewVersion(data);
+        .done(function(data) { 
+            TSPOSTIO.checkNewVersion(data);    
         })
-        .fail(function(data) {
-            console.log("AJAX failed "+data);
+        .fail(function(data) { 
+            console.log("AJAX failed "+data); 
         })
-        ;
-    };
-
+        ;            
+    };   
+    
     var listDirectory = function (dirPath) {
-        TSCORE.showLoadingAnimation();
-
+        TSCORE.showLoadingAnimation();         
+                
         dirPath = dirPath+"/"; // TODO make it platform independent
-
+        
         console.log("Listing directory: " + dirPath);
 
-        var stats = [];
-
+   
         fsRoot.readdir(dirPath, function (err, contents, dirStat, stats) {
             var i, convertedStats = [];
-
+            
             if (!err) {
                 var i;
                 var anotatedDirList = [];
@@ -96,47 +96,47 @@ define(function (require, exports, module) {
                         "size":   stats[i].size,
                         "lmdt":   stats[i].modifiedAt,
                         "path":   stats[i].path
-                    });
+                    });                                 
                 }
                 //console.log("Dir content: " + JSON.stringify(entries));
-                TSPOSTIO.listDirectory(anotatedDirList);
+                TSPOSTIO.listDirectory(anotatedDirList);                     
             } else {
                 TSPOSTIO.errorOpeningPath();
-                console.log("Dir List Error: " + err);
+                console.log("Dir List Error: " + err);            	
             }
         });
     };
 
     var deleteElement = function(path) {
         console.log("Deleting: "+path);
-        TSCORE.showLoadingAnimation();
-
+        TSCORE.showLoadingAnimation();         
+                
         fsRoot.unlink(path, function (err, stat) {
             if(err) {
-                console.log("Error deleting path: "+err);
+            	console.log("Error deleting path: "+err);            	
             } else {
-                console.log("Element deleted: "+stat.path);
-                TSPOSTIO.deleteElement(path);
+            	console.log("Element deleted: "+stat.path);
+				TSPOSTIO.deleteElement(path);  
             }
-        });
+        }); 
     };
 
     var createDirectoryIndex = function(dirPath) {
         console.log("Creating index for directory: "+dirPath);
-        TSCORE.showLoadingAnimation();
-
-        TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");
+        TSCORE.showLoadingAnimation();         
+        
+        TSCORE.showAlertDialog("Creating directory index is not supported on Android yet.");                 
 /*        var directoryIndex = [];
         directoryIndex = scanDirectory(dirPath, directoryIndex);
         console.log(JSON.stringify(directoryIndex));
         TSPOSTIO.createDirectoryIndex(directoryIndex); */
     };
-
+    
     var createDirectoryTree = function(dirPath) {
         console.log("Creating directory index for: "+dirPath);
-        TSCORE.showLoadingAnimation();
-
-        TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");
+        TSCORE.showLoadingAnimation();         
+        
+        TSCORE.showAlertDialog("Creating directory tree is not supported on Android yet.");                 
 /*        var directoyTree = generateDirectoryTree(dirPath);
         //console.log(JSON.stringify(directoyTree));
         TSPOSTIO.createDirectoryTree(directoyTree);*/
@@ -144,98 +144,99 @@ define(function (require, exports, module) {
 
     var loadTextFile = function(filePath) {
         console.log("Loading file: "+filePath);
-        TSCORE.showLoadingAnimation();
-
+        TSCORE.showLoadingAnimation();                 
+        
         fsRoot.readFile(filePath, function (err, data, stat) {
             if(err) {
-                console.log("Error loading file: "+err);
+            	console.log("Error loading file: "+err);            	
             } else {
-                TSPOSTIO.loadTextFile(data);
+				TSPOSTIO.loadTextFile(data);  
             }
-        });
+        });        
     };
-
+    
     var saveTextFile = function(filePath,content) {
         console.log("Saving file: "+filePath);
-        TSCORE.showLoadingAnimation();
-
+        TSCORE.showLoadingAnimation();         
+                
         fsRoot.writeFile(filePath, content, function (err, stat) {
             if(err) {
-                console.log("Error creating/saving file: "+err);
+            	console.log("Error creating/saving file: "+err);            	
             } else {
-                TSPOSTIO.saveTextFile(stat.path);
+				TSPOSTIO.saveTextFile(stat.path);  
             }
-        });
-    };
+        }); 
+    };   
 
     var createDirectory = function(dirPath) {
-        console.log("Creating directory: "+dirPath);
-        TSCORE.showLoadingAnimation();
-
+        console.log("Creating directory: "+dirPath);  
+        TSCORE.showLoadingAnimation();         
+                
         fsRoot.mkdir(dirPath, function (err, stat) {
             if(err) {
-                console.log("Error creating directory: "+err);
+            	console.log("Error creating directory: "+err);            	
             } else {
-                console.log("Directory created: "+stat.path);
-                TSPOSTIO.createDirectory(dirPath);
+            	console.log("Directory created: "+stat.path);
+				TSPOSTIO.createDirectory(dirPath);  
             }
-        });
-    };
-
+        });  
+    }; 
+    
     var renameFile = function(filePath, newFilePath) {
         console.log("Renaming file from: "+filePath+" to: "+newFilePath);
-        TSCORE.showLoadingAnimation();
+        TSCORE.showLoadingAnimation();         
 
         fsRoot.move(filePath, newFilePath, function (err, stat) {
             if(err) {
-                console.log("Error renaming: "+err);
+            	console.log("Error renaming: "+err);            	
             } else {
-                console.log("File renamed to: "+stat.path);
-                TSPOSTIO.renameFile(filePath, stat.path);
+            	console.log("File renamed to: "+stat.path);
+				TSPOSTIO.renameFile(filePath, stat.path);  
             }
         });
     };
 
     var selectDirectory = function() {
         console.log("Operation selectDirectory not supported in the Dropbox mode yet!");
-        TSCORE.showAlertDialog("Selecting directory not supported in the Dropbox mode yet, please type the desired directory path manually in textbox!");
+        TSCORE.showAlertDialog("Selecting directory not supported in the Dropbox mode yet, please type the desired directory path manually in textbox!");         
     };
 
     var selectFile = function() {
         console.log("Operation selectFile not supported in the Dropbox mode!");
     };
-
+    
     var checkAccessFileURLAllowed = function() {
-        console.log("checkAccessFileURLAllowed function not relevant in the Dropbox mode!");
+        console.log("checkAccessFileURLAllowed function not relevant in the Dropbox mode!");        
     };
-
+    
     var openDirectory = function(dirPath) {
         TSCORE.showAlertDialog("Select file functionality not supported in the Dropbox mode!");
     };
-
+    
     var openExtensionsDirectory = function() {
-        TSCORE.showAlertDialog("Open extensions directory functionality not supported in the Dropbox mode!");
+        TSCORE.showAlertDialog("Open extensions directory functionality not supported in the Dropbox mode!"); 
     };
-
+    
     var getFileProperties = function(filePath) {
         console.log("getFileProperties not implemented for dropbox");
-    };
-
-    exports.init                        = init;
-
+    };        
+    
+    exports.init						= init;
+    
     exports.createDirectory             = createDirectory;
-    exports.renameFile                     = renameFile;
-    exports.loadTextFile                 = loadTextFile;
-    exports.saveTextFile                 = saveTextFile;
-    exports.listDirectory                 = listDirectory;
-    exports.deleteElement                 = deleteElement;
-    exports.createDirectoryIndex         = createDirectoryIndex;
+    exports.renameFile                  = renameFile;
+    exports.loadTextFile                = loadTextFile;
+    exports.saveTextFile                = saveTextFile;
+    exports.listDirectory               = listDirectory;
+    exports.deleteElement               = deleteElement;
+    exports.createDirectoryIndex        = createDirectoryIndex;
     exports.createDirectoryTree         = createDirectoryTree;
     exports.selectDirectory             = selectDirectory;
-    exports.openDirectory                = openDirectory;
-    exports.selectFile                     = selectFile;
+    exports.openDirectory               = openDirectory;
+    exports.selectFile                  = selectFile;
     exports.openExtensionsDirectory     = openExtensionsDirectory;
-    exports.checkAccessFileURLAllowed     = checkAccessFileURLAllowed;
+    exports.checkAccessFileURLAllowed   = checkAccessFileURLAllowed;
     exports.checkNewVersion             = checkNewVersion;
     exports.getFileProperties           = getFileProperties;
+
 });
